@@ -142,7 +142,7 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES':('rest_framework_simplejwt.tokens.AccessToken',)
 }
 
-AUTH_USER_MODEL = 'accounts.UserAccount'
+AUTH_USER_MODEL = 'accounts.CustomUser'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/

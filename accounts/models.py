@@ -18,3 +18,15 @@ class UserManager(BaseUserManager):
         user.save(using= self._db)
 
         return user
+
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(max_length=50,unique=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    img = models.ImageField(blank=True, null=True)
+    
+    objects = UserManager()
+    USERNAME_FIELD = 'email'
+
+    def __str__(self):
+        return self.email
