@@ -134,6 +134,7 @@ REST_FRAMEWORK = {
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         #'rest_framework.authentication.TokenAuthentication',
     ],
+    'DATETIME_FORMAT': '%Y/%m/%d %H:%M',
 }
 
 SIMPLE_JWT = {
@@ -152,8 +153,8 @@ AUTH_USER_MODEL = 'accounts.CustomUser'
 
 STATIC_URL = 'static/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
-MEDIA_URL = '/media/'
+MEDIA_URL = '/media/' 
+MEDIA_ROOT = str(BASE_DIR / 'media') 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
