@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders', #追加
+    'corsheaders',
     'rest_framework',
     'app',
     'accounts',
@@ -48,7 +48,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware', #追加
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -59,9 +59,9 @@ MIDDLEWARE = [
 ]
 
 #追加
-CORS_ORIGIN_WHITELIST = [ #以下からのアクセスを許可する
-    "http://localhost:3000"
-]
+# CORS_ORIGIN_WHITELIST = [ #以下からのアクセスを許可する
+#     "http://localhost:3000"
+# ]
 
 ROOT_URLCONF = 'reviewsite.urls'
 

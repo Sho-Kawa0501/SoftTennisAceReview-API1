@@ -40,11 +40,12 @@ class RegisterView(APIView):
         status=status.HTTP_500_INTERNAL_SERVER_ERROR
       )
 
-#ユーザー情報取得
+#ユーザー情報取得 
 class UserView(APIView):
   def get(self,request):
     try:
       user = request.user
+      # serializerを通してjson形式でUser情報を返す
       user = UserSerializer(user)
 
       return Response(
@@ -56,3 +57,7 @@ class UserView(APIView):
         {'error':'ユーザーの取得に問題が発生しました。'},
         status=status.HTTP_500_INTERNAL_SERVER_ERROR
       )
+
+class UserViewSet(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
