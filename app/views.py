@@ -5,9 +5,9 @@ from .models import Post
 
 #一覧表示
 class PostListView(generics.ListAPIView):
-  queryset = Post.objects.all().order_by('-created_at')
-  serializer_class = PostSerializer
-  permissions_classes = (AllowAny,)
+    queryset = Post.objects.all().order_by('-created_at')
+    serializer_class = PostSerializer
+    permission_classes = (AllowAny,)
 
 #詳細
 class PostDetailView(generics.RetrieveAPIView):
