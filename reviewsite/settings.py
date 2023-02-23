@@ -58,10 +58,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-#追加
-# CORS_ORIGIN_WHITELIST = [ #以下からのアクセスを許可する
-#     "http://localhost:3000"
-# ]
+
+CORS_ORIGIN_WHITELIST = [ #以下からのアクセスを許可する
+    "http://localhost:3000"
+]
 
 ROOT_URLCONF = 'reviewsite.urls'
 
