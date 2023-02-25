@@ -22,7 +22,7 @@ class UserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=50,unique=True)
     name = models.CharField(max_length=255,default='未設定')
-    image = models.ImageField(upload_to='images',default='profile/default.png',blank=True, null=True)
+    image = models.ImageField(upload_to='images',default='profile/default.png')
     updated_at = models.DateTimeField("更新日", auto_now=True) 
     created_at = models.DateTimeField("作成日", auto_now_add=True)
     is_active = models.BooleanField(default=True)

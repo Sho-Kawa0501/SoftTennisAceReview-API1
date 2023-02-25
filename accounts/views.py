@@ -46,7 +46,7 @@ class UserView(APIView):
     try:
       user = request.user
       # serializerを通してjson形式でUser情報を返す
-      user = UserSerializer(user)
+      user = UserSerializer(user,context={"request":request})
 
       return Response(
         {'user':user.data},
