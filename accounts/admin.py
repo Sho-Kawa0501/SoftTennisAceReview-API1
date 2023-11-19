@@ -6,6 +6,12 @@ User = get_user_model()
 
 
 class UserAdmin(UserAdmin):
+
+    def display_favorite_reviews(self, obj):
+        return ", ".join([str(review.id) for review in obj.favorite_reviews.all()])
+
+    display_favorite_reviews.short_description = 'Favorited Reviews'
+    
     fieldsets = (
         (None, {
             'fields': (
@@ -16,6 +22,7 @@ class UserAdmin(UserAdmin):
                 'is_active',
                 'is_staff',
                 'is_superuser',
+                'favorite_reviews',
             )}),
     )
 
@@ -41,6 +48,7 @@ class UserAdmin(UserAdmin):
         'email',
         'updated_at',
         'created_at',
+        'display_favorite_reviews',
     )
 
     list_display_links = ('id', 'name', 'email')
@@ -49,35 +57,3 @@ class UserAdmin(UserAdmin):
 
 admin.site.register(User, UserAdmin)
 
-# from django.contrib import admin
-# from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-# from .models import CustomUser
-# from django.utils.translation import gettext as _
-# from . import models
-
-# class UserAdmin(BaseUserAdmin):
-#     ordering = ['id']
-#     list_display = ['email']
-#     fieldsets = (
-#         (None, {'fields': ('img','email', 'password')}),
-#         (_('Personal Info'), {'fields': ()}),
-#         (
-#             _('Permissions'),
-#             {
-#                 'fields': (
-#                     'is_active',
-#                     'is_staff',
-#                     'is_superuser',
-#                 )
-#             }
-#         ),
-#         (_('Important dates'), {'fields': ('last_login',)}),
-#     )
-#     add_fieldsets = (
-#         (None, {
-#             'classes': ('wide',),
-#             'fields': ('email', 'password1', 'password2')
-#         }),
-#     )
-
-# admin.site.register(models.CustomUser, UserAdmin)
