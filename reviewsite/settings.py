@@ -104,10 +104,21 @@ WSGI_APPLICATION = 'reviewsite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'stardb01',
+        'USER': 'postgres',
+        'PASSWORD': 'Akiradai51',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
