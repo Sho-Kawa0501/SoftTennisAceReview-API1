@@ -11,8 +11,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-rwx3p-^r^de3klyj+9q^pkku77!v)b^0d3x5pp7@yb4)!h%w0)'
-# SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
+# SECRET_KEY = 'django-insecure-rwx3p-^r^de3klyj+9q^pkku77!v)b^0d3x5pp7@yb4)!h%w0)'
+SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'RENDER' not in os.environ
@@ -108,14 +108,6 @@ WSGI_APPLICATION = 'reviewsite.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 
 DATABASES = {
     'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
