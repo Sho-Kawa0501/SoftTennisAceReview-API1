@@ -1,4 +1,4 @@
-#!/Users/kawamurashodai/Desktop/STAR本番/DRF/SoftTennisAceReview-API1/env/bin/python3
+#!/Users/kawamurashodai/Desktop/STAR本番/DRF/SoftTennisAceReview-API1/env/bin/python3.11
 # -*- coding: utf-8 -*-
 import re
 import sys
