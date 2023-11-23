@@ -1,12 +1,8 @@
-from django.shortcuts import render
-from rest_framework import viewsets,generics,serializers
+from rest_framework import generics,serializers
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny,IsAuthenticated
+from rest_framework.permissions import AllowAny
 from item import serializers
 from item import models
-from django.shortcuts import get_object_or_404
-import logging
-from reviewsite.authentication import CookieHandlerJWTAuthentication
 from rest_framework.response import Response
 
 class ItemDetailView(generics.RetrieveAPIView):
@@ -34,19 +30,3 @@ class ItemMetadataListView(APIView):
     }
 
     return Response(data)
-
-
-# class BrandListView(generics.ListAPIView):
-#   queryset = models.Brand.objects.all()
-#   serializer_class = serializers.BrandSerializer
-#   permission_classes = (AllowAny,)
-
-# class SeriesListView(generics.ListAPIView):
-#   queryset = models.Series.objects.all()
-#   serializer_class = serializers.SeriesSerializer
-#   permission_classes = (AllowAny,)
-
-# class PositionListView(generics.ListAPIView):
-#   queryset = models.Position.objects.all()
-#   serializer_class = serializers.PositionSerializer
-#   permission_classes = (AllowAny,)

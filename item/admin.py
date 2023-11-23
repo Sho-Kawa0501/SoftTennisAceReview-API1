@@ -30,9 +30,3 @@ class ItemAdmin(admin.ModelAdmin):
   def get_position(self, obj):
     return obj.position.name
   get_position.short_description = 'ポジション名'
-
-
-# admin.site.register(Item)
-# admin.site.register(Brand)
-# admin.site.register(Series)
-# admin.site.register(Position)

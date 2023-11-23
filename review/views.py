@@ -1,13 +1,12 @@
 from rest_framework import viewsets,generics,serializers
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny,IsAuthenticated
+from rest_framework.permissions import AllowAny
 from review import serializers
 from review import models
 from item.models import Item
 from rest_framework import status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
 import logging
 from reviewsite.authentication import CookieHandlerJWTAuthentication
 from django.contrib.auth import get_user_model
@@ -16,9 +15,6 @@ from rest_framework.exceptions import NotFound
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
-#Djangoのビュークラスの命名規則はにモデル名+アクション名+View
-
-#Reviewに関する処理
 #一覧表示
 class ReviewListView(generics.ListAPIView):
   queryset = models.Review.objects.all().order_by('-created_at')
@@ -26,30 +22,19 @@ class ReviewListView(generics.ListAPIView):
   permission_classes = (AllowAny,)
 
 
-#最新のレビューを2つ渡す
-class LatestTwoReviewView(generics.ListAPIView):
-  serializer_class = serializers.ReviewSerializer
-  permission_classes = (AllowAny,)
-
-  def get_queryset(self):
-    return models.Review.objects.all().order_by('-created_at')[:2]
-
-
 class MyReviewListView(APIView):
   serializer_class = serializers.ReviewSerializer
-  # permission_classes = (IsAuthenticated,)
   authentication_classes = (CookieHandlerJWTAuthentication,)
 
   def get_queryset(self):
     return models.Review.objects.filter(user=self.request.user,).order_by('-created_at')
-    # itemIdが設定されていない場合、ユーザーのすべてのレビューを返す
 
   def get(self, request, *args, **kwargs):
     queryset = self.get_queryset()
     serializer = self.serializer_class(queryset, many=True, context={'request': request})
     return Response(serializer.data)
 
-#ログインユーザー以外のレビューを取得
+#ログインしているユーザー以外のユーザーが投稿したレビューを取得
 class OtherUsersReviewListView(APIView):
   serializer_class = serializers.ReviewSerializer
   authentication_classes = (CookieHandlerJWTAuthentication,)
@@ -57,9 +42,7 @@ class OtherUsersReviewListView(APIView):
   def get_queryset(self):
     item_id = self.kwargs.get('item_id', None)
     if item_id:
-      # item_id がマッチし、ログインユーザー以外のレビューを取得
       return models.Review.objects.exclude(user=self.request.user).filter(item__id=item_id).order_by('-created_at')
-    # itemIdが設定されていない場合、ログインユーザー以外のすべてのレビューを返す
     return models.Review.objects.exclude(user=self.request.user).order_by('-created_at')
 
   def get(self, request, *args, **kwargs):
@@ -83,6 +66,7 @@ class CreateReviewView(generics.CreateAPIView):
     item_id = self.kwargs['item_id']
     serializer.save(user=self.request.user, item_id=item_id)
 
+
 class GetFavoriteReviewCountView(generics.RetrieveAPIView):
   queryset = models.Favorite.objects.all()
   serializer_class = serializers.FavoriteCountSerializer
@@ -105,8 +89,8 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
   def perform_update(self, serializer):
     review = serializer.instance
-    if not review.is_edited:  # 既に編集されていない場合のみ
-      serializer.save(is_edited=True)  # is_editedをTrueに設定
+    if not review.is_edited:
+      serializer.save(is_edited=True)
     else:
       serializer.save()
 
@@ -122,19 +106,14 @@ class ReviewListFilterView(generics.ListAPIView):
 class GetFavoriteListView(generics.ListAPIView):
   serializer_class = serializers.ReviewSerializer
   authentication_classes = (CookieHandlerJWTAuthentication,)
+
   def get_queryset(self):
     user = self.request.user
-    # ログインユーザーがお気に入りとして登録したレビューのIDを取得
     favorite_review_ids = models.Favorite.objects.filter(user=user).values_list('review_id', flat=True)
-    # 取得したIDを使用してレビューを取得
     return models.Review.objects.filter(id__in=favorite_review_ids).order_by('-created_at')
 
-
-#APIView?
-#GetLikeReviewCountView
-#GetLikeReviewCountViewというreviewIdを受け取り、そのReviewのlikeの数を返すviewを作成
+#reviewIdを受け取り、それと一致するレビューのいいねの数を返す
 class GetFavoriteReviewCountView(generics.RetrieveAPIView):
-  # queryset = models.Favorite.objects.all()
   serializer_class = serializers.FavoriteCountSerializer
   authentication_classes = (CookieHandlerJWTAuthentication,)
 
@@ -147,21 +126,17 @@ class GetFavoriteReviewCountView(generics.RetrieveAPIView):
     count = models.Favorite.objects.filter(review=review).count()
     return {'favorites_count': count}
 
-
-#何故かAPIView判定になってる
-#review_idとuser_idを引数にして、
-#Likeモデルに引数の2つのidを含むlikeオブジェクトがあればtrue,なければfalseを返すGetLikeReviewViewを作成
+#review_idとuser_idを受け取り、レビューにいいねをしているかしていないかを返す
 class GetFavoriteReviewView(generics.RetrieveAPIView):
   serializer_class = serializers.FavoriteSerializer
   authentication_classes = (CookieHandlerJWTAuthentication,)
 
-  #取得してきたreviewidを使って、
   #Favoriteモデルからユーザーがログインユーザー、取得したreviewidのオブジェクトを持ってくる
   def get_queryset(self):
     review_id = self.kwargs['review_id']
     return models.Favorite.objects.filter(user=self.request.user, review_id=review_id)
-  #使っていない引数は残す
-  def get(self, request, *args, **kwargs):
+  
+  def get(self, *args, **kwargs):
     favorite = self.get_queryset().exists()
     if favorite:
       return Response({'isFavorite': True})
@@ -169,17 +144,15 @@ class GetFavoriteReviewView(generics.RetrieveAPIView):
       return Response({'isFavorite': False})
       
 
-#ViewsetよりかはAPIViewを使用するべき？
-# 真のいいね登録削除機能
+#いいね登録削除機能
 class FavoriteViewSet(viewsets.ViewSet):
-  # queryset = models.Favorite.objects.all()
   serializer_class = serializers.FavoriteSerializer
   authentication_classes = (CookieHandlerJWTAuthentication,)
 
   def create(self, request, review_id=None):
     review = get_object_or_404(models.Review, pk=review_id)
     models.Favorite.objects.create(user=request.user, review=review)
-    review.favorites_count = models.Favorite.objects.filter(review=review).count()  # likes_count を更新します
+    review.favorites_count = models.Favorite.objects.filter(review=review).count()
     review.save()
     return Response({'status': 'favorite set'}, status=status.HTTP_201_CREATED)
 
@@ -187,6 +160,6 @@ class FavoriteViewSet(viewsets.ViewSet):
     review = get_object_or_404(models.Review, pk=review_id)
     favorite = get_object_or_404(models.Favorite, user=request.user, review=review)
     favorite.delete()
-    review.favorites_count = models.Favorite.objects.filter(review=review).count()  # likes_count を更新します
+    review.favorites_count = models.Favorite.objects.filter(review=review).count()
     review.save()
     return Response({'status': 'favorite removed'}, status=status.HTTP_204_NO_CONTENT)

@@ -2,7 +2,12 @@ from pathlib import Path
 import os
 from datetime import timedelta 
 import dj_database_url
+import environ
 
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env()
+env.read_env(os.path.join(BASE_DIR, '.env'))
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -11,8 +16,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-# SECRET_KEY = 'django-insecure-rwx3p-^r^de3klyj+9q^pkku77!v)b^0d3x5pp7@yb4)!h%w0)'
-SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
+
+if os.environ.get('DATABASE_URL'):
+    SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
+else:
+    SECRET_KEY = env('LOCAL_SECRET_KEY')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'RENDER' not in os.environ
@@ -22,8 +31,6 @@ ALLOWED_HOSTS = []
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.contenttypes',
@@ -37,7 +44,7 @@ INSTALLED_APPS = [
     'item',
     'django.contrib.admin',
     'django.contrib.auth',
-    # 'rest_framework_simplejwt.token_blacklist',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -73,7 +80,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:8000',
 ]
 
-
 ROOT_URLCONF = 'reviewsite.urls'
 
 TEMPLATES = [
@@ -93,52 +99,35 @@ TEMPLATES = [
 ]
 
 CORS_ALLOW_HEADERS = [
-'accept',
-'accept-encoding',
-'authorization',
-'content-type',
-'dnt',
-'origin',
-'user-agent',
-'x-csrftoken',
-'x-requested-with',
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
 ]
 
 WSGI_APPLICATION = 'reviewsite.wsgi.application'
 
-
 # Database
-
-# DATABASES = {
-#     'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'stardb01',
-#         'USER': 'postgres',
-#         'PASSWORD': 'Akiradai51',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
-
-if os.environ.get("DATABASE_URL"):
+if os.environ.get('DATABASE_URL'):
     DATABASES = {
-        'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
     }
 else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'stardb01',
-            'USER': 'postgres',
-            'PASSWORD': 'Akiradai51',
-            'HOST': 'localhost',
-            'PORT': '5432',
+            'NAME': env('DB_NAME'),
+            'USER': env('DB_USER'),
+            'PASSWORD': env('DB_PASSWORD'),
+            'HOST': env('DB_HOST'),
+            'PORT': env('DB_PORT'),
         }
-    }
+}
 
 
 # Password validation
@@ -202,8 +191,6 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken', ),
     'AUTH_COOKIE': 'jwt-auth',
     'AUTH_COOKIE_HTTP_ONLY': True,
-    # 'USER_ID_FIELD': 'uuid',
-    # 'AUTH_COOKIE_SECURE': True, 
 }
 
 AUTH_USER_MODEL = 'account.CustomUser'
@@ -229,6 +216,10 @@ if not DEBUG:
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SUPERUSER_NAME = env('SUPERUSER_NAME')
+SUPERUSER_EMAIL = env('SUPERUSER_EMAIL')
+SUPERUSER_PASSWORD = env('SUPERUSER_PASSWORD')
 
 LOGGING = {
     'version': 1,

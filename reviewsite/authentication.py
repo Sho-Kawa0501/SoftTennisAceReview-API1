@@ -32,4 +32,8 @@ class CookieHandlerJWTAuthentication(JWTAuthentication):
 
 
 def csrfToken(request):
-    return JsonResponse({'csrfToken': get_token(request)})
+    try:
+        csrf_token = get_token(request)
+        return JsonResponse({'csrfToken': csrf_token})
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

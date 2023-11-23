@@ -1,10 +1,9 @@
-from django.urls import path, include
+from django.urls import path
 from rest_framework.routers import DefaultRouter
 from item import views
 
 app_name='items'
 router = DefaultRouter()
-# router.register('', UserViewSet)
 
 urlpatterns = [
   path('item_list/',views.ItemListView.as_view(),name='item-list'),
