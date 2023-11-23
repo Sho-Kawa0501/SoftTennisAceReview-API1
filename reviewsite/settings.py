@@ -113,16 +113,32 @@ WSGI_APPLICATION = 'reviewsite.wsgi.application'
 #     'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'stardb01',
-        'USER': 'postgres',
-        'PASSWORD': 'Akiradai51',
-        'HOST': 'localhost',
-        'PORT': '5432',
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'stardb01',
+#         'USER': 'postgres',
+#         'PASSWORD': 'Akiradai51',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
+
+if os.environ.get("DATABASE_URL"):
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'stardb01',
+            'USER': 'postgres',
+            'PASSWORD': 'Akiradai51',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
 
 
 # Password validation
