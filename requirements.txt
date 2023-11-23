@@ -13,6 +13,7 @@ psycopg2==2.9.9
 pycparser==2.21
 PyJWT==2.8.0
 pytz==2023.3.post1
+rest-api-client==0.2
 sqlparse==0.4.4
 typing_extensions==4.8.0
 whitenoise==6.6.0
