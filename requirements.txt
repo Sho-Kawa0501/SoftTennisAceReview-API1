@@ -1,5 +1,4 @@
 asgiref==3.7.2
-cffi==1.16.0
 dj-database-url==2.1.0
 Django==4.2.7
 django-cors-headers==4.3.1
