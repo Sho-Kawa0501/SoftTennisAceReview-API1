@@ -15,6 +15,7 @@ psycopg2==2.9.9
 pycparser==2.21
 PyJWT==2.8.0
 python-dotenv==1.0.0
+python-environ==0.4.54
 pytz==2023.3.post1
 rest-api-client==0.2
 sqlparse==0.4.4
