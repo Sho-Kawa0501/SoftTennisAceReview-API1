@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from django.urls import reverse
 from item.models import Item,Brand,Series,Position
-from app.models import Review,Favorite
+from review.models import Review,Favorite
 from rest_framework.test import APIClient
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token

@@ -34,8 +34,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'app',
-    'accounts',
+    'review',
+    'account',
     'item',
     'rest_framework_simplejwt.token_blacklist',
 ]
@@ -190,7 +190,7 @@ SIMPLE_JWT = {
     # 'AUTH_COOKIE_SECURE': True, 
 }
 
-AUTH_USER_MODEL = 'accounts.CustomUser'
+AUTH_USER_MODEL = 'account.CustomUser'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/

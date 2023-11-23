@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
-from accounts import serializers
+from account import serializers
 from django.conf import settings
 import jwt
 import logging
@@ -25,18 +25,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 logger = logging.getLogger(__name__)
 User = get_user_model()
 
-# 済み
-# class SessionView(APIView):
-#   permission_classes = (permissions.AllowAny, )
-#   authentication_classes = ()
-#   def get(self, request):
-#     if not hasattr(request, 'user'):
-#       raise ValidationError('User object not found')
-#     is_authenticated = request.user.is_authenticated
-#     return Response({'isAuthenticated': is_authenticated})
-    
 
-# 済み
 class RegisterView(APIView):
   #ログインしていなくても使用可能
   permission_classes = (permissions.AllowAny, )

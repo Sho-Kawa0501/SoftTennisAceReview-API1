@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app import models
+from review import models
 from django.contrib.admin import ModelAdmin
 
 @admin.register(models.Review)

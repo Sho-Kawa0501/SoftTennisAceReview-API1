@@ -5,7 +5,6 @@ from rest_framework.permissions import AllowAny,IsAuthenticated
 from item import serializers
 from item import models
 from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
 import logging
 from reviewsite.authentication import CookieHandlerJWTAuthentication
 from rest_framework.response import Response

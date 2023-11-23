@@ -33,25 +33,3 @@ class CookieHandlerJWTAuthentication(JWTAuthentication):
 
 def csrfToken(request):
     return JsonResponse({'csrfToken': get_token(request)})
-
-# def refresh_get(request):
-#     try:
-#         RT = request.COOKIES['refresh_token']
-#         if not RT:
-#             return HttpResponseBadRequest("Cookie 'refresh_token' is empty or invalid.")
-#         return JsonResponse({'refresh': RT})
-#     except KeyError:
-#         return HttpResponseBadRequest("Cookie 'refresh_token' was not found.")
-#     except Exception as e:
-#         print(e)
-#         return HttpResponseBadRequest("An error occurred: {}".format(e))
-
-
-
-# def refresh_get(request):
-#     try:
-#         RT = request.COOKIES['refresh_token']
-#         return JsonResponse({'refresh': RT})
-#     except Exception as e:
-#         print(e)
-#         return HttpResponseBadRequest("An error occurred: {}".format(e))

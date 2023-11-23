@@ -1,6 +1,6 @@
 from django.urls import path
 from django.conf.urls import include
-from app import views
+from review import views
 from rest_framework.routers import DefaultRouter
 
 app_name = 'reviews'

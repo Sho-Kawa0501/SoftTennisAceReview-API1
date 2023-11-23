@@ -1,5 +1,5 @@
 from django.db import models
-from app.models import Review
+from review.models import Review
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 import uuid
 
