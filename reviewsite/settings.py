@@ -62,8 +62,8 @@ MIDDLEWARE = [
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:3000',
     'http://localhost:3000',
-    'soft-tennis-ace-review1-6eb3-git-release-sho-kawa0501.vercel.app',
-    'soft-tennis-ace-review1-6eb3-hvj5nkok5-sho-kawa0501.vercel.app',
+    'https://soft-tennis-ace-review1-6eb3-git-release-sho-kawa0501.vercel.app',
+    'https://soft-tennis-ace-review1-6eb3-hvj5nkok5-sho-kawa0501.vercel.app',
     
 ]
 
@@ -75,8 +75,8 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'soft-tennis-ace-review1-6eb3-git-release-sho-kawa0501.vercel.app',
-    'soft-tennis-ace-review1-6eb3-hvj5nkok5-sho-kawa0501.vercel.app',
+    'https://soft-tennis-ace-review1-6eb3-git-release-sho-kawa0501.vercel.app',
+    'https://soft-tennis-ace-review1-6eb3-hvj5nkok5-sho-kawa0501.vercel.app',
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -84,8 +84,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'soft-tennis-ace-review1-6eb3-git-release-sho-kawa0501.vercel.app',
-    'soft-tennis-ace-review1-6eb3-hvj5nkok5-sho-kawa0501.vercel.app',
+    'https://soft-tennis-ace-review1-6eb3-git-release-sho-kawa0501.vercel.app',
+    'https://soft-tennis-ace-review1-6eb3-hvj5nkok5-sho-kawa0501.vercel.app',
 ]
 
 ROOT_URLCONF = 'reviewsite.urls'
