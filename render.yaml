@@ -2,6 +2,7 @@ databases:
   - name: api_db
     plan: free
     databaseName: api_db
+    region: singapore
     user: api_db
 
 services:
@@ -9,6 +10,7 @@ services:
     name: api
     plan: free
     env: python
+    region: singapore
     buildCommand: "./build.sh"
     startCommand: "gunicorn reviewsite.wsgi:application"
     envVars:
@@ -22,3 +24,5 @@ services:
         value: 2
       - key: DJANGO_SUPERUSER_PASSWORD
         generateValue: true
+
+autoDeploy: true
