@@ -17,10 +17,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-if os.environ.get('DATABASE_URL'):
-    SECRET_KEY = env('SECRET_KEY')
-else:
-    SECRET_KEY = env('LOCAL_SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
+
+
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
