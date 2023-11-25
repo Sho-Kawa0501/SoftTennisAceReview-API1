@@ -53,7 +53,9 @@ class RegisterView(APIView):
 
 # jwt_expはexceptionsに名称変更している(jwt_views,exceptions as jwt_exp)
 class MyTokenObtainPairView(jwt_views.TokenObtainPairView):
-  serializer_class = serializers.MyTokenObtainPairSerializer
+  # serializer_class = serializers.MyTokenObtainPairSerializer
+  permission_classes = (permissions.AllowAny, )
+  authentication_classes = ()
 
   def post(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)

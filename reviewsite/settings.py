@@ -8,9 +8,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
 env.read_env(os.path.join(BASE_DIR, '.env'))
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -18,9 +15,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 
 SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
-
-
-
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'RENDER' not in os.environ
@@ -61,7 +55,6 @@ MIDDLEWARE = [
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:3000',
     'http://localhost:3000',
-    'https://soft-tennis-ace-review1-6eb3-git-feature-sho-kawa0501.vercel.app',
     'https://soft-tennis-ace-review1.vercel.app',
     
 ]
@@ -74,7 +67,6 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'https://soft-tennis-ace-review1-6eb3-git-release-sho-kawa0501.vercel.app',
     'https://soft-tennis-ace-review1.vercel.app',
 ]
 
@@ -83,7 +75,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'https://soft-tennis-ace-review1-6eb3-git-release-sho-kawa0501.vercel.app',
     'https://soft-tennis-ace-review1.vercel.app',
 ]
 
