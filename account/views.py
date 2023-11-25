@@ -123,7 +123,7 @@ class CheckAuthView(APIView):
 
 # coookieからリフレッシュトークンを取得
 class RefreshGetView(APIView):
-  authentication_classes = (CookieHandlerJWTAuthentication,)
+  # authentication_classes = (CookieHandlerJWTAuthentication,)
 
   def get(self, request, *args, **kwargs):
     try:
