@@ -219,10 +219,10 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # AWS-Settings
-AWS_ACCESS_KEY = env('AWS_ACCESS_KEY')
-AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-AWS_BUCKET_NAME = env('AWS_BUCKET_NAME')
-AWS_LOCATION = env('AWS_LOCATION') # s3バケット上のベースとなるファイルパス
+AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_BUCKET_NAME = os.environ.get('AWS_BUCKET_NAME')
+AWS_LOCATION = os.environ.get('AWS_LOCATION') # s3バケット上のベースとなるファイルパス
 
 # STATIC-Files
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_BUCKET_NAME
