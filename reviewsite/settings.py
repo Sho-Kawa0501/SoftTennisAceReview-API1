@@ -219,7 +219,7 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # AWS-Settings
-AWS_ACCESS_KEY = env('AWS_ACCESS_KEY_ID')
+AWS_ACCESS_KEY = env('AWS_ACCESS_KEY')
 AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
 AWS_BUCKET_NAME = env('AWS_BUCKET_NAME')
 AWS_LOCATION = env('AWS_LOCATION ') # s3バケット上のベースとなるファイルパス
