@@ -225,6 +225,8 @@ AWS_LOCATION = 'static' # s3バケット上のベースとなるファイルパ�
 STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'
 
+AWS_S3_BUCKET_NAME_STATIC = AWS_STORAGE_BUCKET_NAME
+
 # STATIC_URL = '/static/'
 
 # MEDIA_URL = '/media/' 
