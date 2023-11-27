@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'rest_framework_simplejwt.token_blacklist',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -197,10 +198,6 @@ AUTH_USER_MODEL = 'account.CustomUser'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = '/static/'
-
-MEDIA_URL = '/media/' 
-MEDIA_ROOT = str(BASE_DIR / 'media') 
 
 if not DEBUG:
     # Tell Django to copy statics to the `staticfiles` directory
@@ -222,11 +219,19 @@ STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 # AWS_BUCKET_NAME ='soft-tennis-ace-review-bucket'
-AWS_BUCKET_NAME = os.environ.get('AWS_BUCKET_NAME')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_BUCKET_NAME')
 AWS_LOCATION = 'static' # s3バケット上のベースとなるファイルパス
 
+STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
+MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'
+
+# STATIC_URL = '/static/'
+
+# MEDIA_URL = '/media/' 
+# MEDIA_ROOT = str(BASE_DIR / 'media') 
+
 # STATIC-Files
-AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_BUCKET_NAME
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
