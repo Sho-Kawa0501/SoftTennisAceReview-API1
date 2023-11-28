@@ -219,7 +219,7 @@ STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 # AWS_BUCKET_NAME ='soft-tennis-ace-review-bucket'
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_BUCKET_NAME')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_LOCATION = 'static' # s3バケット上のベースとなるファイルパス
 
 STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
