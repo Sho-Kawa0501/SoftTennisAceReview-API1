@@ -225,7 +225,7 @@ AWS_LOCATION = 'static' # s3バケット上のベースとなるファイルパ�
 STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'
 
-AWS_S3_BUCKET_NAME_STATIC = AWS_STORAGE_BUCKET_NAME
+AWS_S3_BUCKET_NAME_STATIC = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 
 # STATIC_URL = '/static/'
 
@@ -236,7 +236,7 @@ AWS_S3_BUCKET_NAME_STATIC = AWS_STORAGE_BUCKET_NAME
 AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'staticfiles'),
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
