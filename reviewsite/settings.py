@@ -216,9 +216,8 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # AWS-Settings
-AWS_ACCESS_KEY = os.environ.get('AWS_ACCESS_KEY')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-# AWS_BUCKET_NAME ='soft-tennis-ace-review-bucket'
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_LOCATION = 'static' # s3バケット上のベースとなるファイルパス
 AWS_S3_REGION_NAME='ap-northeast-1'
@@ -259,5 +258,4 @@ LOGGING = {
         'handlers': ['file'],
         'level': 'DEBUG',
     },
-    
 }
