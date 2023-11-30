@@ -3,12 +3,14 @@ databases:
     plan: free
     databaseName: api_db
     user: api_db
+    region: singapore
 
 services:
   - type: web
     name: api
     plan: free
     env: python
+    region: singapore
     buildCommand: "./build.sh"
     startCommand: "gunicorn reviewsite.wsgi:application"
     envVars:
