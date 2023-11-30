@@ -220,7 +220,8 @@ AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_LOCATION = 'static' # s3バケット上のベースとなるファイルパス
-AWS_S3_REGION_NAME='ap-northeast-1'
+# AWS_S3_REGION_NAME='ap-northeast-1'
+AWS_S3_REGION_NAME=os.environ.get('AWS_S3_REGION_NAME')
 
 STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
 MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'
