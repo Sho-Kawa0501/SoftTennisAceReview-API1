@@ -20,7 +20,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = 'RENDER' not in os.environ
 # DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1",]
+ALLOWED_HOSTS = []
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -113,11 +113,7 @@ CORS_ALLOW_HEADERS = [
 WSGI_APPLICATION = 'reviewsite.wsgi.application'
 
 # Database
-if os.environ.get('DATABASE_URL'):
-    DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-    }
-else:
+if DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -128,6 +124,11 @@ else:
             'PORT': env('DB_PORT'),
         }
     }
+else:
+    DATABASES = {"default": dj_database_url.config()}
+    # DATABASES = {
+    #     'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    # }
 
 
 # Password validation
