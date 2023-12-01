@@ -24,7 +24,7 @@ ALLOWED_HOSTS = [
     'https://api-2i7c.onrender.com',
     'https://soft-tennis-ace-review1-kfitgto5f-sho-kawa0501.vercel.app',
     'soft-tennis-ace-review1.vercel.app',
-    ]
+]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
