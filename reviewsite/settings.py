@@ -223,9 +223,9 @@ AWS_LOCATION = 'static' # s3バケット上のベースとなるファイルパ�
 # AWS_S3_REGION_NAME='ap-northeast-1'
 AWS_S3_REGION_NAME=os.environ.get('AWS_S3_REGION_NAME')
 
-# STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
+STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
 # MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'
-STATIC_URL = 'https://%s.s3.ap-northeast-1.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
+# STATIC_URL = 'https://%s.s3.ap-northeast-1.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
 # AWS_S3_BUCKET_NAME_STATIC = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 
 # STATIC_URL = '/static/'
