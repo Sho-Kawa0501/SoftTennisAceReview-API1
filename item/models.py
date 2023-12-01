@@ -48,8 +48,8 @@ class Item(models.Model):
   item_photo = models.ImageField(
     blank=True,
     null=True,
-    upload_to='images/',
-    default='profile/default.png'
+    upload_to='items/',
+    default='default/default_item.png'
   )
   release_date = models.DateField()
   display = models.BooleanField(default=False)
