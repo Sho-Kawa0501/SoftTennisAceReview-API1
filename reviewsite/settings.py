@@ -22,7 +22,6 @@ DEBUG = 'RENDER' not in os.environ
 
 ALLOWED_HOSTS = [
     'https://api-2i7c.onrender.com',
-    'https://soft-tennis-ace-review1-kfitgto5f-sho-kawa0501.vercel.app',
     'soft-tennis-ace-review1.vercel.app',
 ]
 
@@ -231,9 +230,9 @@ STORAGES = {
     "default": {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
     },
-    "staticfiles": {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-    },
+    # "staticfiles": {
+    #     "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    # },
 }
 
 # AWS-Settings
