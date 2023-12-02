@@ -242,6 +242,7 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_LOCATION = 'static' # s3バケット上のベースとなるファイルパス
 # AWS_S3_REGION_NAME='ap-northeast-1'
 AWS_S3_REGION_NAME=os.environ.get('AWS_S3_REGION_NAME')
+AWS_S3_URL = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 
 # STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
 # MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/media/'
@@ -275,6 +276,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SUPERUSER_EMAIL = env('SUPERUSER_EMAIL')
 SUPERUSER_PASSWORD = env('SUPERUSER_PASSWORD')
+
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
 
 LOGGING = {
     'version': 1,
