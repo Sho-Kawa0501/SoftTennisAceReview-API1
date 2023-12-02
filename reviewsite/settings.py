@@ -235,7 +235,7 @@ AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 AWS_LOCATION = 'static' # s3バケット上のベースとなるファイルパス
 AWS_S3_REGION_NAME=os.environ.get('AWS_S3_REGION_NAME')
 AWS_S3_URL = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-
+AWS_DEFAULT_REGION='sa-east-1'
 
 # STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, 'static')
 
@@ -244,7 +244,7 @@ STATICFILES_DIRS = [
 ]
 
 AWS_QUERYSTRING_AUTH = False
-AWS_DEFAULT_ACL = 'None'
+AWS_DEFAULT_ACL = ''
 AWS_S3_VERIFY = True
 AWS_HEADERS = {
     'Access-Control-Allow-Origin': '*',
@@ -269,7 +269,7 @@ STORAGES = {
             "access_key": AWS_ACCESS_KEY_ID,
             "secret_key": AWS_SECRET_ACCESS_KEY,
             "file_overwrite": False,
-            "default_acl": "public-read",
+            "default_acl": "",
             "querystring_auth": False,
             "object_parameters": {
                 "CacheControl": "max-age=86400",
