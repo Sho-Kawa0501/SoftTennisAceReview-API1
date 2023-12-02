@@ -262,15 +262,24 @@ STATIC_ROOT = 'https://%s/%s/static/' % (AWS_S3_CUSTOM_DOMAIN,STATICFILES_LOCATI
 
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3.S3Storage"
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "bucket_name": AWS_STORAGE_BUCKET_NAME,
+            "region_name": AWS_S3_REGION_NAME,
+            "access_key": AWS_ACCESS_KEY_ID,
+            "secret_key": AWS_SECRET_ACCESS_KEY,
+            "file_overwrite": False,
+            "default_acl": "public-read",
+            "querystring_auth": False,
+            "object_parameters": {
+                "CacheControl": "max-age=86400",
+            },
+            # その他のオプション
+        },
     },
     "staticfiles": {
-        "BACKEND":"storages.backends.s3.S3Storage"
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
     },
-    "OPTIONS": {
-        "bucket_name": AWS_STORAGE_BUCKET_NAME,
-        "region_name": AWS_S3_REGION_NAME,
-    }
 }
 
 # STATIC_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/static/'
