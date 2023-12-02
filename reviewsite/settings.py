@@ -246,9 +246,9 @@ STATICFILES_DIRS = [
 AWS_QUERYSTRING_AUTH = False
 AWS_DEFAULT_ACL = None
 AWS_S3_VERIFY = True
-AWS_HEADERS = {
-    'Access-Control-Allow-Origin': '*',
-}
+# AWS_HEADERS = {
+#     'Access-Control-Allow-Origin': '*',
+# }
 
 
 STATICFILES_LOCATION = 'static'
@@ -269,7 +269,7 @@ STORAGES = {
             "access_key": AWS_ACCESS_KEY_ID,
             "secret_key": AWS_SECRET_ACCESS_KEY,
             "file_overwrite": False,
-            "default_acl": "",
+            "default_acl": None,
             "querystring_auth": False,
             "object_parameters": {
                 "CacheControl": "max-age=86400",
