@@ -22,3 +22,11 @@ services:
         value: 4
       - key: DJANGO_SUPERUSER_PASSWORD
         generateValue: true
+      - key: AWS_ACCESS_KEY_ID
+        generateValue: true
+      - key: AWS_ACCESS_SECRET_KEY
+        generateValue: true
+      - key: AWS_S3_REGION_NAME
+        generateValue: true
+      - key: AWS_STORAGE_BUCKET_NAME
+        generateValue: true
