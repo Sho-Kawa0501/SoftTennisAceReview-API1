@@ -244,7 +244,7 @@ STATICFILES_DIRS = [
 ]
 
 AWS_QUERYSTRING_AUTH = False
-AWS_DEFAULT_ACL = ''
+AWS_DEFAULT_ACL = None
 AWS_S3_VERIFY = True
 AWS_HEADERS = {
     'Access-Control-Allow-Origin': '*',
