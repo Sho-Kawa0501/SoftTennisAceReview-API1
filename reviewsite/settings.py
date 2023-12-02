@@ -209,8 +209,7 @@ AUTH_USER_MODEL = 'account.CustomUser'
 #     # in your application directory on Render.
 #     STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-    # Turn on WhiteNoise storage backend that takes care of compressing static files
-    # and creating unique names for each version so they can safely be cached forever.
+
     # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
@@ -264,10 +263,10 @@ STATIC_ROOT = 'https://%s/%s/static/' % (AWS_S3_CUSTOM_DOMAIN,STATICFILES_LOCATI
 
 STORAGES = {
     "default": {
-        "BACKEND":'custom_storages.MediaStorage',
+        "BACKEND":'storages.backends.s3boto3.S3Boto3Storage'
     },
     "staticfiles": {
-        "BACKEND":'custom_storages.StaticStorage',
+        "BACKEND":'storages.backends.s3boto3.S3Boto3Storage'
     },
     "OPTIONS": {
         "bucket_name": AWS_STORAGE_BUCKET_NAME,
