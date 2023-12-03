@@ -6,7 +6,7 @@ databases:
 
 services:
   - type: web
-    name: api
+    name: SoftTennisAceReview-API1
     plan: free
     env: python
     buildCommand: "./build.sh"
