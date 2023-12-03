@@ -5,6 +5,9 @@ import dj_database_url
 import environ
 import boto3
 
+import logging
+
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
@@ -51,7 +54,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -237,7 +240,7 @@ AWS_S3_SIGNATURE_VERSION = 's3v4'
 # STATIC_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, 'static')
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR,'static'),
 ]
 
 AWS_QUERYSTRING_AUTH = False
@@ -318,3 +321,6 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
+
+logger = logging.getLogger(__name__)
+logger.debug(f"DEBUG mode is {'on' if DEBUG else 'off'}")
