@@ -177,17 +177,18 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.BasicAuthentication',
     ],
     'DATETIME_FORMAT': '%Y/%m/%d %H:%M',
 }
 
 if not DEBUG:
     JWT_AUTH_SECURE = True
-    JWT_AUTH_SAMESITE = 'None'  # または 'Strict' や 'Lax' など他の値に設定することも可能
+    JWT_AUTH_SAMESITE = 'Lax'  # または 'Strict' や 'Lax' など他の値に設定することも可能
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SAMESITE = 'None'  # または 'Strict' や 'Lax' など他の値に設定することも可能
+    SESSION_COOKIE_SAMESITE = 'Lax'  # または 'Strict' や 'Lax' など他の値に設定することも可能
+    SECURE_SSL_REDIRECT='True'
 else:
     # 開発環境の場合の設定
     JWT_AUTH_SECURE = False
@@ -259,9 +260,9 @@ STATICFILES_DIRS = [
 AWS_QUERYSTRING_AUTH = False
 AWS_DEFAULT_ACL = None
 AWS_S3_VERIFY = True
-# AWS_HEADERS = {
-#     'Access-Control-Allow-Origin': '*',
-# }
+AWS_HEADERS = {
+    'Access-Control-Allow-Origin': '*',
+}
 
 
 STATICFILES_LOCATION = 'static'
@@ -287,7 +288,6 @@ STORAGES = {
             "object_parameters": {
                 "CacheControl": "max-age=86400",
             },
-            # その他のオプション
         },
     },
     "staticfiles": {
