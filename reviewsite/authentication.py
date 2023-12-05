@@ -24,8 +24,6 @@ class CookieHandlerJWTAuthentication(JWTAuthentication):
         try:
             return super().authenticate(request)
         except InvalidToken:
-            if not settings.SECRET_KEY == settings.SECRET_KEY:
-                raise exceptions.AuthenticationFailed('Invalid secret key')
             raise exceptions.AuthenticationFailed('Invalid token')
         except TokenError:
             raise exceptions.AuthenticationFailed('Token error')

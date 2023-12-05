@@ -7,7 +7,7 @@ User = get_user_model()
 
 class UserAdmin(UserAdmin):
     def display_favorite_reviews(self, obj):
-        return ", ".join([str(review.uuid) for review in obj.favorite_reviews.all()])
+        return ", ".join([str(review.id) for review in obj.favorite_reviews.all()])
 
     display_favorite_reviews.short_description = 'Favorited Reviews'
     
@@ -42,7 +42,7 @@ class UserAdmin(UserAdmin):
     )
 
     list_display = (
-        'uuid',
+        'id',
         'name',
         'email',
         'updated_at',
@@ -50,8 +50,8 @@ class UserAdmin(UserAdmin):
         'display_favorite_reviews',
     )
 
-    list_display_links = ('uuid', 'name', 'email')
-    ordering = ('uuid',)
+    list_display_links = ('id', 'name', 'email')
+    ordering = ('id',)
 
 admin.site.register(User, UserAdmin)
 
