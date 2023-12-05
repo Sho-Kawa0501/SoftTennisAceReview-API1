@@ -53,7 +53,7 @@ class RegisterView(APIView):
 
 # jwt_expはexceptionsに名称変更している(jwt_views,exceptions as jwt_exp)
 class MyTokenObtainPairView(jwt_views.TokenObtainPairView):
-  # serializer_class = serializers.MyTokenObtainPairSerializer
+  serializer_class = serializers.MyTokenObtainPairSerializer
   permission_classes = (permissions.AllowAny, )
   authentication_classes = ()
 
@@ -68,12 +68,14 @@ class MyTokenObtainPairView(jwt_views.TokenObtainPairView):
         "access_token",
         serializer.validated_data["access"],
         max_age=60 * 60 * 24,
+        secure=True,
         httponly=True,
       )
       res.set_cookie(
         "refresh_token",
         serializer.validated_data["refresh"],
         max_age=60 * 60 * 24 * 30,
+        secure=True,
         httponly=True,
       )
     except Exception as e:
@@ -164,6 +166,7 @@ class AccessTokenRefreshView(jwt_views.TokenRefreshView):
         "access_token",
         serializer.validated_data["access"],
         max_age=60 * 24 * 24 * 30,
+        secure=True,
         httponly=True,
       )
     except Exception as e:

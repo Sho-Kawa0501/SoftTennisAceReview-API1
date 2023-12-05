@@ -10,7 +10,7 @@ class Brand(models.Model):
   )
 
   def __str__(self):
-      return self.name
+    return self.name
 
 class Series(models.Model):
   name = models.CharField(
@@ -34,6 +34,9 @@ class Position(models.Model):
     blank=False,
     null=False,
   )
+
+  def __str__(self):
+    return self.name
 
 class Item(models.Model):
   item_name = models.CharField(max_length=30,null=False)
