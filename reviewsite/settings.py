@@ -182,6 +182,20 @@ REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y/%m/%d %H:%M',
 }
 
+if not DEBUG:
+    JWT_AUTH_SECURE = True
+    JWT_AUTH_SAMESITE = 'None'  # または 'Strict' や 'Lax' など他の値に設定することも可能
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SESSION_COOKIE_SAMESITE = 'None'  # または 'Strict' や 'Lax' など他の値に設定することも可能
+else:
+    # 開発環境の場合の設定
+    JWT_AUTH_SECURE = False
+    JWT_AUTH_SAMESITE = 'Lax'  # または 'Strict' や 'None' など他の値に設定することも可能
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SAMESITE = 'Lax'
+
 # REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'jwt-auth'
 # JWT_AUTH_SECURE = True
