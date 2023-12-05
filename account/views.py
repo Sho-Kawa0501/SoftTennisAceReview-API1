@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from rest_framework import response
 from django.contrib.auth import get_user_model
 from rest_framework import permissions,status
@@ -70,6 +69,7 @@ class MyTokenObtainPairView(jwt_views.TokenObtainPairView):
         max_age=60 * 60 * 24,
         secure=True,
         httponly=True,
+        samesite='Lax',
       )
       res.set_cookie(
         "refresh_token",
@@ -77,6 +77,7 @@ class MyTokenObtainPairView(jwt_views.TokenObtainPairView):
         max_age=60 * 60 * 24 * 30,
         secure=True,
         httponly=True,
+        samesite='Lax',
       )
     except Exception as e:
       raise e.APIException("Failed to set access_token cookies.")
@@ -168,6 +169,7 @@ class AccessTokenRefreshView(jwt_views.TokenRefreshView):
         max_age=60 * 24 * 24 * 30,
         secure=True,
         httponly=True,
+        samesite='Lax',
       )
     except Exception as e:
       raise e.APIException("Failed to set access_token cookies.")
