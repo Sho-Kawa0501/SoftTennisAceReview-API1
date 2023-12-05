@@ -18,8 +18,6 @@ env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 
-SECRET_KEY = os.environ.get('SECRET_KEY')
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'RENDER' not in os.environ
 # DEBUG = True
@@ -29,6 +27,7 @@ DEBUG = 'RENDER' not in os.environ
 #     'https://api-2i7c.onrender.com',
 #     'soft-tennis-ace-review1.vercel.app',
 # ]
+SECRET_KEY = os.environ.get('SECRET_KEY', default=os.environ['SECRET_KEY'])
 
 ALLOWED_HOSTS = ['*']
 
