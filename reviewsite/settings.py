@@ -66,7 +66,7 @@ MIDDLEWARE = [
 CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:3000',
     'http://localhost:3000',
-    'https://soft-tennis-ace-review1.vercel.app',
+    'https://www.softtennis-ace-review.com',
     
 ]
 
@@ -78,7 +78,7 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'https://soft-tennis-ace-review1.vercel.app',
+    'https://www.softtennis-ace-review.com',
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -86,7 +86,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'https://soft-tennis-ace-review1.vercel.app',
+    'https://www.softtennis-ace-review.com/',
 ]
 
 ROOT_URLCONF = 'reviewsite.urls'
@@ -177,7 +177,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ],
     'DATETIME_FORMAT': '%Y/%m/%d %H:%M',
 }
@@ -192,10 +192,10 @@ if not DEBUG:
 else:
     # 開発環境の場合の設定
     JWT_AUTH_SECURE = False
-    JWT_AUTH_SAMESITE = 'Lax'  # または 'Strict' や 'None' など他の値に設定することも可能
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = False
-    SESSION_COOKIE_SAMESITE = 'Lax'
+    # JWT_AUTH_SAMESITE = 'Lax'  # または 'Strict' や 'None' など他の値に設定することも可能
+    # SESSION_COOKIE_SECURE = False
+    # CSRF_COOKIE_SECURE = False
+    # SESSION_COOKIE_SAMESITE = 'Lax'
 
 # REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'jwt-auth'
@@ -263,7 +263,6 @@ AWS_S3_VERIFY = True
 AWS_HEADERS = {
     'Access-Control-Allow-Origin': '*',
 }
-
 
 STATICFILES_LOCATION = 'static'
 MEDIAFILES_LOCATION = 'media'
