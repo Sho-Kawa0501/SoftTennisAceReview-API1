@@ -29,7 +29,7 @@ DEBUG = 'RENDER' not in os.environ
 # ]
 SECRET_KEY = os.environ.get('SECRET_KEY', default=os.environ['SECRET_KEY'])
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -184,18 +184,18 @@ REST_FRAMEWORK = {
 
 if not DEBUG:
     JWT_AUTH_SECURE = True
-    JWT_AUTH_SAMESITE = 'Lax'  # または 'Strict' や 'Lax' など他の値に設定することも可能
+    JWT_AUTH_SAMESITE = 'None'  # または 'Strict' や 'Lax' など他の値に設定することも可能
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SAMESITE = 'Lax'  # または 'Strict' や 'Lax' など他の値に設定することも可能
-    SECURE_SSL_REDIRECT='True'
+    SESSION_COOKIE_SAMESITE = 'None'  # または 'Strict' や 'Lax' など他の値に設定することも可能
+    SECURE_SSL_REDIRECT = True
 else:
     # 開発環境の場合の設定
     JWT_AUTH_SECURE = False
-    # JWT_AUTH_SAMESITE = 'Lax'  # または 'Strict' や 'None' など他の値に設定することも可能
-    # SESSION_COOKIE_SECURE = False
-    # CSRF_COOKIE_SECURE = False
-    # SESSION_COOKIE_SAMESITE = 'Lax'
+    JWT_AUTH_SAMESITE = 'Lax'  # または 'Strict' や 'None' など他の値に設定することも可能
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SESSION_COOKIE_SAMESITE = 'Lax'
 
 # REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'jwt-auth'
