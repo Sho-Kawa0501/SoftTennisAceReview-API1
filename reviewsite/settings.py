@@ -29,7 +29,7 @@ DEBUG = 'RENDER' not in os.environ
 # ]
 SECRET_KEY = os.environ.get('SECRET_KEY', default=os.environ['SECRET_KEY'])
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["https://www.softtennis-ace-review.com"]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
