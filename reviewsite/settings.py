@@ -86,7 +86,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    'https://www.softtennis-ace-review.com/',
+    'https://www.softtennis-ace-review.com',
 ]
 
 ROOT_URLCONF = 'reviewsite.urls'
