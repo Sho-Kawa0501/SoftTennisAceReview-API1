@@ -31,6 +31,8 @@ ALLOWED_HOSTS = [
     'https://www.soft-tennis-star-review.com',
     'https://soft-tennis-star-review.com',
     '127.0.0.1',
+    'softtennis-ace-review.com',
+    'soft-tennis-star-review.com',
 ]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
@@ -69,7 +71,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://127.0.0.1:3000',
     'http://localhost:3000',
     'https://www.softtennis-ace-review.com',
-    
+    'https://softtennis-ace-review.com',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = False
@@ -81,6 +83,7 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
     'https://www.softtennis-ace-review.com',
+    'https://softtennis-ace-review.com',
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -89,6 +92,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:8000',
     'http://127.0.0.1:8000',
     'https://www.softtennis-ace-review.com',
+    'https://softtennis-ace-review.com',
 ]
 
 ROOT_URLCONF = 'reviewsite.urls'
