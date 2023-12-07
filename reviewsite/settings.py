@@ -22,14 +22,15 @@ env.read_env(os.path.join(BASE_DIR, '.env'))
 DEBUG = 'RENDER' not in os.environ
 # DEBUG = True
 
-# ALLOWED_HOSTS = [
-#     '127.0.0.1',
-#     'https://api-2i7c.onrender.com',
-#     'soft-tennis-ace-review1.vercel.app',
-# ]
+ALLOWED_HOSTS = [
+    
+]
 SECRET_KEY = os.environ.get('SECRET_KEY', default=os.environ['SECRET_KEY'])
 
-ALLOWED_HOSTS = ["https://www.softtennis-ace-review.com"]
+ALLOWED_HOSTS = [
+    'https://www.softtennis-ace-review.com',
+    '127.0.0.1',
+]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -169,7 +170,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-#ユーザー認証関係で使用、JWTを使った認証方法を指定
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -184,15 +185,15 @@ REST_FRAMEWORK = {
 
 if not DEBUG:
     JWT_AUTH_SECURE = True
-    JWT_AUTH_SAMESITE = 'None'  # または 'Strict' や 'Lax' など他の値に設定することも可能
+    JWT_AUTH_SAMESITE = 'None'
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SAMESITE = 'None'  # または 'Strict' や 'Lax' など他の値に設定することも可能
+    SESSION_COOKIE_SAMESITE = 'None'
     SECURE_SSL_REDIRECT = True
 else:
     # 開発環境の場合の設定
     JWT_AUTH_SECURE = False
-    JWT_AUTH_SAMESITE = 'Lax'  # または 'Strict' や 'None' など他の値に設定することも可能
+    JWT_AUTH_SAMESITE = 'Lax'
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
     SESSION_COOKIE_SAMESITE = 'Lax'
