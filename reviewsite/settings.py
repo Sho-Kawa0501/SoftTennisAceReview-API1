@@ -29,6 +29,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default=os.environ['SECRET_KEY'])
 
 ALLOWED_HOSTS = [
     'https://www.softtennis-ace-review.com',
+    'https://softtennis-ace-review.com',
+    'https://www.soft-tennis-star-review.com',
+    'https://soft-tennis-star-review.com',
     '127.0.0.1',
 ]
 
