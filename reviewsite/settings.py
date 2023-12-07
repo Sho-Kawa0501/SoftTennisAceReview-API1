@@ -22,9 +22,7 @@ env.read_env(os.path.join(BASE_DIR, '.env'))
 DEBUG = 'RENDER' not in os.environ
 # DEBUG = True
 
-ALLOWED_HOSTS = [
-    
-]
+
 SECRET_KEY = os.environ.get('SECRET_KEY', default=os.environ['SECRET_KEY'])
 
 ALLOWED_HOSTS = [
