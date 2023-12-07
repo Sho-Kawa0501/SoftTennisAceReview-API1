@@ -69,7 +69,7 @@ class MyTokenObtainPairView(jwt_views.TokenObtainPairView):
         max_age=60 * 60 * 24,
         secure=True,
         httponly=True,
-        samesite='Lax',
+        samesite='None',
       )
       res.set_cookie(
         "refresh_token",
@@ -77,7 +77,7 @@ class MyTokenObtainPairView(jwt_views.TokenObtainPairView):
         max_age=60 * 60 * 24 * 30,
         secure=True,
         httponly=True,
-        samesite='Lax',
+        samesite='None',
       )
     except Exception as e:
       raise e.APIException("Failed to set access_token cookies.")
@@ -169,7 +169,7 @@ class AccessTokenRefreshView(jwt_views.TokenRefreshView):
         max_age=60 * 24 * 24 * 30,
         secure=True,
         httponly=True,
-        samesite='Lax',
+        samesite='None',
       )
     except Exception as e:
       raise e.APIException("Failed to set access_token cookies.")
