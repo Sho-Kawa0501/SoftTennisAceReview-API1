@@ -14,25 +14,6 @@ class ReviewSerializer(serializers.ModelSerializer):
     model = models.Review
     fields = '__all__'
 
-  def create(self, validated_data):
-    image = validated_data.pop('image', None)
-    review = models.Review.objects.create(**validated_data)
-    if image:
-      resized_image = resize_image(image)
-      review.image.save(resized_image.name, resized_image, save=True)
-    return review
-
-  def update(self, instance, validated_data):
-    image = validated_data.pop('image', None)
-    if image:
-      resized_image = resize_image(image)
-      instance.image.save(resized_image.name, resized_image, save=False)
-
-    for attr, value in validated_data.items():
-      setattr(instance, attr, value)
-    instance.save()
-    return instance
-
   def get_is_my_review(self, obj):
     return self.context['request'].user == obj.user
 
