@@ -85,6 +85,9 @@ class CreateReviewView(generics.CreateAPIView):
       serializer.save(user=self.request.user)
 
   def resize_image(self, image, max_width=640, max_height=480):
+    # 画像がパレットモード（"P"）の場合、RGBモードに変換
+    if image.mode in ("P", "RGBA"):
+        image = image.convert("RGB")
     # 元の画像のサイズを取得
     original_width, original_height = image.size
 
