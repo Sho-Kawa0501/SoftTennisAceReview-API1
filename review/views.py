@@ -94,7 +94,7 @@ class CreateReviewView(generics.CreateAPIView):
     new_height = int(original_height * ratio)
 
     # 画像をリサイズ
-    resized_image = image.resize((new_width, new_height), Image.ANTIALIAS)
+    resized_image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
     return resized_image
 
   # def perform_create(self, serializer):
