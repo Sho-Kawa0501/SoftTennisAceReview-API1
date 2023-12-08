@@ -15,6 +15,7 @@ from PIL import Image
 import io
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.exceptions import ValidationError
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -69,20 +70,25 @@ class CreateReviewView(generics.CreateAPIView):
 
   def perform_create(self, serializer):
     image = self.request.FILES.get('image')
-    if image:
-      # 画像のリサイズ処理
-      with Image.open(image) as img:
-        resized_image = self.resize_image(img)
+      # item_idの取得（POSTリクエストから取得するなど）
+    if not image:
+            # 画像がない場合はValidationErrorをスロー
+      raise ValidationError({'image': 'Image is required.'})
 
-      # リサイズした画像をInMemoryUploadedFileに変換
-      image_io = io.BytesIO()
-      resized_image.save(image_io, format='JPEG', quality=85)
-      image_io.seek(0)
-      image_file = InMemoryUploadedFile(image_io, None, image.name, 'image/jpeg', image_io.getbuffer().nbytes, None)
+    
+    # 画像のリサイズ処理
+    with Image.open(image) as img:
+      resized_image = self.resize_image(img)
 
-      serializer.save(user=self.request.user, image=image_file)
-    else:
-      serializer.save(user=self.request.user)
+    # リサイズした画像をInMemoryUploadedFileに変換
+    image_io = io.BytesIO()
+    resized_image.save(image_io, format='JPEG', quality=85)
+    image_io.seek(0)
+    image_file = InMemoryUploadedFile(image_io, None, image.name, 'image/jpeg', image_io.getbuffer().nbytes, None)
+    item_id = self.kwargs.get('item_id')  # URLからitem_idを取得
+
+    serializer.save(user=self.request.user, image=image_file, item_id=item_id)
+    
 
   def resize_image(self, image, max_width=640, max_height=480):
     # 画像がパレットモード（"P"）の場合、RGBモードに変換
