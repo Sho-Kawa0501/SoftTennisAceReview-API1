@@ -19,8 +19,8 @@ env.read_env(os.path.join(BASE_DIR, '.env'))
 # SECURITY WARNING: keep the secret key used in production secret!
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'RENDER' not in os.environ
-# DEBUG = True
+# DEBUG = 'RENDER' not in os.environ
+DEBUG = True
 
 
 SECRET_KEY = os.environ.get('SECRET_KEY', default=os.environ['SECRET_KEY'])
@@ -131,23 +131,27 @@ CORS_ALLOW_HEADERS = [
 
 WSGI_APPLICATION = 'reviewsite.wsgi.application'
 
+# デバッグTrue
 # Database
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': env('DB_NAME'),
-            'USER': env('DB_USER'),
-            'PASSWORD': env('DB_PASSWORD'),
-            'HOST': env('DB_HOST'),
-            'PORT': env('DB_PORT'),
-        }
-    }
-else:
-    # DATABASES = {"default": dj_database_url.config()}
-    DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-    }
+# if DEBUG:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': env('DB_NAME'),
+#             'USER': env('DB_USER'),
+#             'PASSWORD': env('DB_PASSWORD'),
+#             'HOST': env('DB_HOST'),
+#             'PORT': env('DB_PORT'),
+#         }
+#     }
+# else:
+#     # DATABASES = {"default": dj_database_url.config()}
+#     DATABASES = {
+#         'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+#     }
+DATABASES = {
+    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+}
 
 
 # Password validation
@@ -192,20 +196,21 @@ REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y/%m/%d %H:%M',
 }
 
-if not DEBUG:
-    JWT_AUTH_SECURE = True
-    JWT_AUTH_SAMESITE = 'None'
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SAMESITE = 'None'
-    SECURE_SSL_REDIRECT = True
-else:
-    # 開発環境の場合の設定
-    JWT_AUTH_SECURE = False
-    JWT_AUTH_SAMESITE = 'Lax'
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = False
-    SESSION_COOKIE_SAMESITE = 'Lax'
+# デバッグTrue
+# if not DEBUG:
+JWT_AUTH_SECURE = True
+JWT_AUTH_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'None'
+SECURE_SSL_REDIRECT = True
+# else:
+#     # 開発環境の場合の設定
+#     JWT_AUTH_SECURE = False
+#     JWT_AUTH_SAMESITE = 'Lax'
+#     SESSION_COOKIE_SECURE = False
+#     CSRF_COOKIE_SECURE = False
+#     SESSION_COOKIE_SAMESITE = 'Lax'
 
 # REST_USE_JWT = True
 JWT_AUTH_COOKIE = 'jwt-auth'
