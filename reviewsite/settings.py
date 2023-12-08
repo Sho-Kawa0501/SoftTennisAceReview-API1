@@ -33,6 +33,10 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'softtennis-ace-review.com',
     'soft-tennis-star-review.com',
+    'http://127.0.0.1:3000',
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
 ]
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')

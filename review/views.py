@@ -11,6 +11,10 @@ import logging
 from reviewsite.authentication import CookieHandlerJWTAuthentication
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import NotFound
+from PIL import Image
+import io
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from rest_framework.parsers import MultiPartParser, FormParser
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -61,22 +65,42 @@ class CreateReviewView(generics.CreateAPIView):
   queryset = models.Review.objects.all()
   serializer_class = serializers.ReviewSerializer
   authentication_classes = (CookieHandlerJWTAuthentication,)
+  parser_classes = (MultiPartParser, FormParser)
 
   def perform_create(self, serializer):
-    item_id = self.kwargs['item_id']
-    serializer.save(user=self.request.user, item_id=item_id)
+    image = self.request.FILES.get('image')
+    if image:
+      # 画像のリサイズ処理
+      with Image.open(image) as img:
+        resized_image = self.resize_image(img)
 
+      # リサイズした画像をInMemoryUploadedFileに変換
+      image_io = io.BytesIO()
+      resized_image.save(image_io, format='JPEG', quality=85)
+      image_io.seek(0)
+      image_file = InMemoryUploadedFile(image_io, None, image.name, 'image/jpeg', image_io.getbuffer().nbytes, None)
 
-class GetFavoriteReviewCountView(generics.RetrieveAPIView):
-  queryset = models.Favorite.objects.all()
-  serializer_class = serializers.FavoriteCountSerializer
-  authentication_classes = (CookieHandlerJWTAuthentication,)
+      serializer.save(user=self.request.user, image=image_file)
+    else:
+      serializer.save(user=self.request.user)
 
-  def get_object(self):
-    review_id = self.kwargs['review_id']
-    review = models.Review.objects.get(id=review_id)
-    count = models.Favorite.objects.filter(review=review).count()
-    return {'favorites_count': count}
+  def resize_image(self, image, max_width=640, max_height=480):
+    # 元の画像のサイズを取得
+    original_width, original_height = image.size
+
+    # 縦横比を保持しながら新しいサイズを計算
+    ratio = min(max_width / original_width, max_height / original_height)
+    new_width = int(original_width * ratio)
+    new_height = int(original_height * ratio)
+
+    # 画像をリサイズ
+    resized_image = image.resize((new_width, new_height), Image.ANTIALIAS)
+    return resized_image
+
+  # def perform_create(self, serializer):
+  #   item_id = self.kwargs['item_id']
+  #   serializer.save(user=self.request.user, item_id=item_id)
+
 
 #新規投稿、編集、削除
 class ReviewViewSet(viewsets.ModelViewSet):
@@ -101,6 +125,19 @@ class ReviewListFilterView(generics.ListAPIView):
   def get_queryset(self):
     item_id = self.kwargs['pk']
     return models.Review.objects.filter(item_id=item_id)
+
+
+class GetFavoriteReviewCountView(generics.RetrieveAPIView):
+  queryset = models.Favorite.objects.all()
+  serializer_class = serializers.FavoriteCountSerializer
+  authentication_classes = (CookieHandlerJWTAuthentication,)
+
+  def get_object(self):
+    review_id = self.kwargs['review_id']
+    review = models.Review.objects.get(id=review_id)
+    count = models.Favorite.objects.filter(review=review).count()
+    return {'favorites_count': count}
+
 
 #ログインユーザーのお気に入りをしたレビュー一覧
 class GetFavoriteListView(generics.ListAPIView):
