@@ -72,9 +72,7 @@ class CreateReviewView(generics.CreateAPIView):
     image = self.request.FILES.get('image')
       # item_idの取得（POSTリクエストから取得するなど）
     if not image:
-            # 画像がない場合はValidationErrorをスロー
       raise ValidationError({'image': 'Image is required.'})
-
     
     # 画像のリサイズ処理
     with Image.open(image) as img:
@@ -90,7 +88,7 @@ class CreateReviewView(generics.CreateAPIView):
     serializer.save(user=self.request.user, image=image_file, item_id=item_id)
     
 
-  def resize_image(self, image, max_width=640, max_height=480):
+  def resize_image(self, image, max_width=500, max_height=500):
     # 画像がパレットモード（"P"）の場合、RGBモードに変換
     if image.mode in ("P", "RGBA"):
         image = image.convert("RGB")
