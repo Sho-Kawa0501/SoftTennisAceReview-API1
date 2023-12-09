@@ -11,7 +11,7 @@ import logging
 from reviewsite.authentication import CookieHandlerJWTAuthentication
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import NotFound
-from PIL import Image
+from PIL import Image, ExifTags
 import io
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -19,6 +19,26 @@ from rest_framework.exceptions import ValidationError
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
+
+def rotate_image(image):
+  try:
+    for orientation in ExifTags.TAGS.keys():
+      if ExifTags.TAGS[orientation] == 'Orientation':
+        break
+      exif = dict(image._getexif().items())
+
+      if exif[orientation] == 3:
+        image = image.rotate(180, expand=True)
+      elif exif[orientation] == 6:
+        image = image.rotate(270, expand=True)
+      elif exif[orientation] == 8:
+        image = image.rotate(90, expand=True)
+
+  except (AttributeError, KeyError, IndexError):
+      # 画像にExif情報がない場合は何もしない
+    pass
+
+  return image
 
 #一覧表示
 class ReviewListView(generics.ListAPIView):
