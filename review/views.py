@@ -20,25 +20,44 @@ from rest_framework.exceptions import ValidationError
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
-def rotate_image(image):
+# def rotate_image(image):
+#   try:
+#     for orientation in ExifTags.TAGS.keys():
+#       if ExifTags.TAGS[orientation] == 'Orientation':
+#         break
+#       exif = dict(image._getexif().items())
+
+#       if exif[orientation] == 3:
+#         image = image.rotate(180, expand=True)
+#       elif exif[orientation] == 6:
+#         image = image.rotate(270, expand=True)
+#       elif exif[orientation] == 8:
+#         image = image.rotate(90, expand=True)
+
+#   except (AttributeError, KeyError, IndexError):
+#       # 画像にExif情報がない場合は何もしない
+#     pass
+
+#   return image
+
+def rotate_image_based_on_exif(image):
   try:
-    for orientation in ExifTags.TAGS.keys():
-      if ExifTags.TAGS[orientation] == 'Orientation':
-        break
-      exif = dict(image._getexif().items())
-
-      if exif[orientation] == 3:
-        image = image.rotate(180, expand=True)
-      elif exif[orientation] == 6:
-        image = image.rotate(270, expand=True)
-      elif exif[orientation] == 8:
-        image = image.rotate(90, expand=True)
-
-  except (AttributeError, KeyError, IndexError):
-      # 画像にExif情報がない場合は何もしない
-    pass
+    exif = image._getexif()
+    if exif is not None:
+      orientation_key = next((key for key, value in ExifTags.TAGS.items() if value == 'Orientation'), None)
+      if orientation_key is not None:
+        orientation = exif.get(orientation_key)
+        if orientation == 3:
+          image = image.rotate(180, expand=True)
+        elif orientation == 6:
+          image = image.rotate(270, expand=True)
+        elif orientation == 8:
+          image = image.rotate(90, expand=True)
+  except (AttributeError, KeyError, IndexError, TypeError):
+    pass  # Exif情報がない、または解釈できない場合は何もしない
 
   return image
+
 
 #一覧表示
 class ReviewListView(generics.ListAPIView):
@@ -110,7 +129,7 @@ class CreateReviewView(generics.CreateAPIView):
 
   def resize_image(self, image, max_width=500, max_height=500):
     # 画像がパレットモード（"P"）の場合、RGBモードに変換
-    image = rotate_image(image)
+    image = rotate_image_based_on_exif(image)
     if image.mode in ("P", "RGBA"):
         image = image.convert("RGB")
     # 元の画像のサイズを取得
