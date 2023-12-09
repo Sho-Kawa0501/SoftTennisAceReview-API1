@@ -125,24 +125,35 @@ class CreateReviewView(generics.CreateAPIView):
     item_id = self.kwargs.get('item_id')  # URLからitem_idを取得
 
     serializer.save(user=self.request.user, image=image_file, item_id=item_id)
+
+  def resize_image(self, image, size=500):
+    # Exifに基づいて画像の向きを修正
+    image = rotate_image_based_on_exif(image)
+    # 画像をリサイズ
+    image.thumbnail((size, size))
+    # 新しい正方形のキャンバスを作成（背景は白）
+    new_image = Image.new("RGB", (size, size), (255, 255, 255))
+    # リサイズされた画像を中央に配置
+    new_image.paste(image, (int((size - image.size[0]) / 2), int((size - image.size[1]) / 2)))
+    return new_image
     
 
-  def resize_image(self, image, max_width=500, max_height=500):
-    # 画像がパレットモード（"P"）の場合、RGBモードに変換
-    image = rotate_image_based_on_exif(image)
-    if image.mode in ("P", "RGBA"):
-        image = image.convert("RGB")
-    # 元の画像のサイズを取得
-    original_width, original_height = image.size
+  # def resize_image(self, image, max_width=500, max_height=500):
+  #   # 画像がパレットモード（"P"）の場合、RGBモードに変換
+  #   image = rotate_image_based_on_exif(image)
+  #   if image.mode in ("P", "RGBA"):
+  #       image = image.convert("RGB")
+  #   # 元の画像のサイズを取得
+  #   original_width, original_height = image.size
 
-    # 縦横比を保持しながら新しいサイズを計算
-    ratio = min(max_width / original_width, max_height / original_height)
-    new_width = int(original_width * ratio)
-    new_height = int(original_height * ratio)
+  #   # 縦横比を保持しながら新しいサイズを計算
+  #   ratio = min(max_width / original_width, max_height / original_height)
+  #   new_width = int(original_width * ratio)
+  #   new_height = int(original_height * ratio)
 
-    # 画像をリサイズ
-    resized_image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
-    return resized_image
+  #   # 画像をリサイズ
+  #   resized_image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+  #   return resized_image
 
   # def perform_create(self, serializer):
   #   item_id = self.kwargs['item_id']
