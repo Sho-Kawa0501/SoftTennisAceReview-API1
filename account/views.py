@@ -189,7 +189,6 @@ class UserViewSet(ModelViewSet):
 
   def perform_update(self, serializer):
     # レビューの画像が変更される場合の処理（S3から古い画像を削除する処理を追加）
-    review = serializer.instance
     if 'image' in serializer.validated_data:
       # S3から古い画像を削除する処理をここに追加
       pass
@@ -209,6 +208,7 @@ class UserViewSet(ModelViewSet):
         image_io.getbuffer().nbytes, None
       )
       serializer.validated_data['image'] = image_file
+      serializer.save()
 
 
 class LogoutView(APIView):
