@@ -80,7 +80,13 @@ class CreateReviewView(generics.CreateAPIView):
     image_io = io.BytesIO()
     resized_image.save(image_io, format='JPEG', quality=85)
     image_io.seek(0)
-    image_file = InMemoryUploadedFile(image_io, None, image.name, 'image/jpeg', image_io.getbuffer().nbytes, None)
+    image_file = InMemoryUploadedFile(
+      image_io,
+      None,
+      image.name,
+      'image/jpeg',
+      image_io.getbuffer().nbytes, None
+    )
     item_id = self.kwargs.get('item_id')
 
     serializer.save(user=self.request.user, image=image_file, item_id=item_id)
@@ -102,14 +108,20 @@ class ReviewViewSet(viewsets.ModelViewSet):
       # S3から古い画像を削除する処理をここに追加
       pass
 
-    resized_image = None
     if self.request.FILES.get('image'):
+      uploaded_file = self.request.FILES.get('image')
       with Image.open(self.request.FILES.get('image')) as img:
         resized_image = resize_image(img)
       image_io = io.BytesIO()
       resized_image.save(image_io, format='JPEG', quality=85)
       image_io.seek(0)
-      image_file = InMemoryUploadedFile(image_io, None, img.name, 'image/jpeg', image_io.getbuffer().nbytes, None)
+      image_file = InMemoryUploadedFile(
+        image_io,
+        None,
+        uploaded_file.name,
+        'image/jpeg',
+        image_io.getbuffer().nbytes, None
+      )
       serializer.validated_data['image'] = image_file
 
     if not review.is_edited:
