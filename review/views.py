@@ -110,6 +110,7 @@ class CreateReviewView(generics.CreateAPIView):
 
   def resize_image(self, image, max_width=500, max_height=500):
     # 画像がパレットモード（"P"）の場合、RGBモードに変換
+    image = rotate_image(image)
     if image.mode in ("P", "RGBA"):
         image = image.convert("RGB")
     # 元の画像のサイズを取得
