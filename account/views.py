@@ -14,6 +14,12 @@ from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework.exceptions import NotAuthenticated
 from rest_framework_simplejwt import views as jwt_views,exceptions as jwt_exp
 from reviewsite.authentication import CookieHandlerJWTAuthentication
+from PIL import Image
+import io
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from rest_framework.parsers import MultiPartParser, FormParser
+from reviewsite.utils.image_utils import resize_image
+
 
 
 logger = logging.getLogger(__name__)
@@ -180,6 +186,34 @@ class UserViewSet(ModelViewSet):
   queryset = User.objects.all()
   serializer_class = serializers.UserSerializer
   authentication_classes = (CookieHandlerJWTAuthentication,)
+
+  def perform_update(self, serializer):
+    # レビューの画像が変更される場合の処理（S3から古い画像を削除する処理を追加）
+    review = serializer.instance
+    if 'image' in serializer.validated_data:
+      # S3から古い画像を削除する処理をここに追加
+      pass
+
+    if self.request.FILES.get('image'):
+      uploaded_file = self.request.FILES.get('image')
+      with Image.open(self.request.FILES.get('image')) as img:
+        resized_image = resize_image(img)
+      image_io = io.BytesIO()
+      resized_image.save(image_io, format='JPEG', quality=85)
+      image_io.seek(0)
+      image_file = InMemoryUploadedFile(
+        image_io,
+        None,
+        uploaded_file.name,
+        'image/jpeg',
+        image_io.getbuffer().nbytes, None
+      )
+      serializer.validated_data['image'] = image_file
+
+    if not review.is_edited:
+      serializer.save(is_edited=True)
+    else:
+      serializer.save()
 
 
 class LogoutView(APIView):

@@ -10,17 +10,6 @@ class UserSerializer(serializers.ModelSerializer):
     model = User
     fields = ('id','name','email','image','favorite_reviews')
 
-  def update(self, instance, validated_data):
-    image = validated_data.pop('image', None)
-    if image:
-      resized_image = resize_image(image)
-      instance.image.save(resized_image.name, resized_image, save=False)
-
-    for attr, value in validated_data.items():
-      setattr(instance, attr, value)
-    instance.save()
-    return instance
-
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
   class Meta:
     model = User
