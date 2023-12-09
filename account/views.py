@@ -210,11 +210,6 @@ class UserViewSet(ModelViewSet):
       )
       serializer.validated_data['image'] = image_file
 
-    if not review.is_edited:
-      serializer.save(is_edited=True)
-    else:
-      serializer.save()
-
 
 class LogoutView(APIView):
   authentication_classes = (CookieHandlerJWTAuthentication,)
