@@ -9,9 +9,10 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 import logging
 from reviewsite.authentication import CookieHandlerJWTAuthentication
+from reviewsite.utils.image_utils import resize_image
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import NotFound
-from PIL import Image, ExifTags
+from PIL import Image
 import io
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -19,45 +20,6 @@ from rest_framework.exceptions import ValidationError
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
-
-# def rotate_image(image):
-#   try:
-#     for orientation in ExifTags.TAGS.keys():
-#       if ExifTags.TAGS[orientation] == 'Orientation':
-#         break
-#       exif = dict(image._getexif().items())
-
-#       if exif[orientation] == 3:
-#         image = image.rotate(180, expand=True)
-#       elif exif[orientation] == 6:
-#         image = image.rotate(270, expand=True)
-#       elif exif[orientation] == 8:
-#         image = image.rotate(90, expand=True)
-
-#   except (AttributeError, KeyError, IndexError):
-#       # 画像にExif情報がない場合は何もしない
-#     pass
-
-#   return image
-
-def rotate_image_based_on_exif(image):
-  try:
-    exif = image._getexif()
-    if exif is not None:
-      orientation_key = next((key for key, value in ExifTags.TAGS.items() if value == 'Orientation'), None)
-      if orientation_key is not None:
-        orientation = exif.get(orientation_key)
-        if orientation == 3:
-          image = image.rotate(180, expand=True)
-        elif orientation == 6:
-          image = image.rotate(270, expand=True)
-        elif orientation == 8:
-          image = image.rotate(90, expand=True)
-  except (AttributeError, KeyError, IndexError, TypeError):
-    pass  # Exif情報がない、または解釈できない場合は何もしない
-
-  return image
-
 
 #一覧表示
 class ReviewListView(generics.ListAPIView):
@@ -109,55 +71,19 @@ class CreateReviewView(generics.CreateAPIView):
 
   def perform_create(self, serializer):
     image = self.request.FILES.get('image')
-      # item_idの取得（POSTリクエストから取得するなど）
     if not image:
       raise ValidationError({'image': 'Image is required.'})
-    
-    # 画像のリサイズ処理
+      
     with Image.open(image) as img:
-      resized_image = self.resize_image(img)
+      resized_image = resize_image(img)
 
-    # リサイズした画像をInMemoryUploadedFileに変換
     image_io = io.BytesIO()
     resized_image.save(image_io, format='JPEG', quality=85)
     image_io.seek(0)
     image_file = InMemoryUploadedFile(image_io, None, image.name, 'image/jpeg', image_io.getbuffer().nbytes, None)
-    item_id = self.kwargs.get('item_id')  # URLからitem_idを取得
+    item_id = self.kwargs.get('item_id')
 
     serializer.save(user=self.request.user, image=image_file, item_id=item_id)
-
-  def resize_image(self, image, size=500):
-    # Exifに基づいて画像の向きを修正
-    image = rotate_image_based_on_exif(image)
-    # 画像をリサイズ
-    image.thumbnail((size, size))
-    # 新しい正方形のキャンバスを作成（背景は白）
-    new_image = Image.new("RGB", (size, size), (255, 255, 255))
-    # リサイズされた画像を中央に配置
-    new_image.paste(image, (int((size - image.size[0]) / 2), int((size - image.size[1]) / 2)))
-    return new_image
-    
-
-  # def resize_image(self, image, max_width=500, max_height=500):
-  #   # 画像がパレットモード（"P"）の場合、RGBモードに変換
-  #   image = rotate_image_based_on_exif(image)
-  #   if image.mode in ("P", "RGBA"):
-  #       image = image.convert("RGB")
-  #   # 元の画像のサイズを取得
-  #   original_width, original_height = image.size
-
-  #   # 縦横比を保持しながら新しいサイズを計算
-  #   ratio = min(max_width / original_width, max_height / original_height)
-  #   new_width = int(original_width * ratio)
-  #   new_height = int(original_height * ratio)
-
-  #   # 画像をリサイズ
-  #   resized_image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
-  #   return resized_image
-
-  # def perform_create(self, serializer):
-  #   item_id = self.kwargs['item_id']
-  #   serializer.save(user=self.request.user, item_id=item_id)
 
 
 #新規投稿、編集、削除
@@ -166,11 +92,26 @@ class ReviewViewSet(viewsets.ModelViewSet):
   serializer_class = serializers.ReviewSerializer
   authentication_classes = (CookieHandlerJWTAuthentication,)
 
-  def perform_create(self,serializer,**kwargs):
-    serializer.save(user=self.request.user)
+  # def perform_create(self,serializer,**kwargs):
+  #   serializer.save(user=self.request.user)
 
   def perform_update(self, serializer):
+    # レビューの画像が変更される場合の処理（S3から古い画像を削除する処理を追加）
     review = serializer.instance
+    if 'image' in serializer.validated_data:
+      # S3から古い画像を削除する処理をここに追加
+      pass
+
+    resized_image = None
+    if self.request.FILES.get('image'):
+      with Image.open(self.request.FILES.get('image')) as img:
+        resized_image = resize_image(img)
+      image_io = io.BytesIO()
+      resized_image.save(image_io, format='JPEG', quality=85)
+      image_io.seek(0)
+      image_file = InMemoryUploadedFile(image_io, None, img.name, 'image/jpeg', image_io.getbuffer().nbytes, None)
+      serializer.validated_data['image'] = image_file
+
     if not review.is_edited:
       serializer.save(is_edited=True)
     else:

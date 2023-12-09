@@ -1,12 +1,31 @@
-from PIL import Image
-from django.core.files.base import ContentFile
+from PIL import Image, ExifTags
 import io
+from django.core.files.uploadedfile import InMemoryUploadedFile
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.exceptions import ValidationError
 
-# 画像サイズ変更
-def resize_image(image, size=(200, 200)):
-  img = Image.open(image)
-  img.thumbnail(size, Image.ANTIALIAS)
-  thumb_io = io.BytesIO()
-  img.save(thumb_io, img.format, quality=85)
-  image_file = ContentFile(thumb_io.getvalue(), name=image.name)
-  return image_file
+def rotate_image_based_on_exif(image):
+  try:
+    exif = image._getexif()
+    if exif is not None:
+      orientation_key = next((key for key, value in ExifTags.TAGS.items() if value == 'Orientation'), None)
+      if orientation_key is not None:
+        orientation = exif.get(orientation_key)
+        if orientation == 3:
+          image = image.rotate(180, expand=True)
+        elif orientation == 6:
+          image = image.rotate(270, expand=True)
+        elif orientation == 8:
+          image = image.rotate(90, expand=True)
+  except (AttributeError, KeyError, IndexError, TypeError):
+    pass  # Exif情報がない、または解釈できない場合は何もしない
+
+  return image
+
+# 画像のリサイズ処理
+def resize_image(image, size=500):
+  image = rotate_image_based_on_exif(image)
+  image.thumbnail((size, size))
+  new_image = Image.new("RGB", (size, size), (255, 255, 255))
+  new_image.paste(image, (int((size - image.size[0]) / 2), int((size - image.size[1]) / 2)))
+  return new_image
