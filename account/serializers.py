@@ -8,12 +8,12 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
   class Meta:
     model = User
-    fields = ('id','name','email','image','favorite_reviews')
+    fields = ('id','name','email','image','favorite_reviews','is_edited')
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
   class Meta:
     model = User
-    fields = ('id','name','email','image','favorite_reviews')
+    fields = ('id','name','email','image','favorite_reviews','is_edited')
 
   default_error_messages = {
     'no_active_account': 'メールアドレスまたはパスワードが間違っています'
