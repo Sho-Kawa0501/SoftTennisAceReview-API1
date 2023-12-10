@@ -18,7 +18,8 @@ from PIL import Image
 import io
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.parsers import MultiPartParser, FormParser
-from reviewsite.utils.image_utils import resize_image
+from reviewsite.utils.image_utils import resize_image,delete_image_from_s3
+from botocore.exceptions import ClientError
 
 
 
@@ -188,10 +189,13 @@ class UserViewSet(ModelViewSet):
   authentication_classes = (CookieHandlerJWTAuthentication,)
 
   def perform_update(self, serializer):
-    # レビューの画像が変更される場合の処理（S3から古い画像を削除する処理を追加）
+    login_user = serializer.instance
+
     if 'image' in serializer.validated_data:
-      # S3から古い画像を削除する処理をここに追加
-      pass
+      old_image = login_user.image
+      if old_image:
+        image_path = 'static/' + old_image.name
+        delete_image_from_s3(image_path)
 
     if self.request.FILES.get('image'):
       uploaded_file = self.request.FILES.get('image')

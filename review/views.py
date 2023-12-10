@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 import logging
 from reviewsite.authentication import CookieHandlerJWTAuthentication
-from reviewsite.utils.image_utils import resize_image
+from reviewsite.utils.image_utils import resize_image,delete_image_from_s3
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import NotFound
 from PIL import Image
@@ -18,7 +18,6 @@ import io
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.exceptions import ValidationError
-import boto3
 import boto3
 from botocore.exceptions import ClientError
 from django.conf import settings
@@ -109,23 +108,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
   def perform_update(self, serializer):
     # レビューの画像が変更される場合の処理（S3から古い画像を削除する処理を追加）
     review = serializer.instance
+
     if 'image' in serializer.validated_data:
       old_image = review.image
       if old_image:
-        try:
-          s3_client = boto3.client(
-            's3',
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-          )
-          image_path = 'static/' + old_image.name
-          s3_client.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=image_path)
-        except ClientError as e:
-          logger.error(f"Failed to delete image from S3: {e}")
-
-    if 'image' in serializer.validated_data:
-      # S3から古い画像を削除する処理をここに追加
-      pass
+        image_path = 'static/' + old_image.name
+        delete_image_from_s3(image_path)
 
     if self.request.FILES.get('image'):
       uploaded_file = self.request.FILES.get('image')

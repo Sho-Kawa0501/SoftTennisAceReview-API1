@@ -3,6 +3,10 @@ import io
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.exceptions import ValidationError
+import boto3
+from botocore.exceptions import ClientError
+from django.conf import settings
+
 
 def rotate_image_based_on_exif(image):
   try:
@@ -29,3 +33,16 @@ def resize_image(image, size=500):
   new_image = Image.new("RGB", (size, size), (255, 255, 255))
   new_image.paste(image, (int((size - image.size[0]) / 2), int((size - image.size[1]) / 2)))
   return new_image
+
+
+def delete_image_from_s3(image_path):
+  try:
+    s3_client = boto3.client(
+      's3',
+      aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+      aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+    )
+    s3_client.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=image_path)
+  except ClientError as e:
+    e
+  return None
