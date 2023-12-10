@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from review import serializers
 from review import models
+import os
 from item.models import Item
 from rest_framework import status
 from rest_framework.response import Response
@@ -17,6 +18,10 @@ import io
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.exceptions import ValidationError
+import boto3
+import boto3
+from botocore.exceptions import ClientError
+from django.conf import settings
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -104,6 +109,20 @@ class ReviewViewSet(viewsets.ModelViewSet):
   def perform_update(self, serializer):
     # レビューの画像が変更される場合の処理（S3から古い画像を削除する処理を追加）
     review = serializer.instance
+    if 'image' in serializer.validated_data:
+      old_image = review.image
+      if old_image:
+        try:
+          s3_client = boto3.client(
+            's3',
+            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+          )
+          image_path = 'static/' + old_image.name
+          s3_client.delete_object(Bucket=settings.AWS_STORAGE_BUCKET_NAME, Key=image_path)
+        except ClientError as e:
+          logger.error(f"Failed to delete image from S3: {e}")
+
     if 'image' in serializer.validated_data:
       # S3から古い画像を削除する処理をここに追加
       pass

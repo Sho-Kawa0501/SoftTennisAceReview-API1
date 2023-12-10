@@ -2,7 +2,6 @@ from rest_framework import serializers
 from review import models
 from account.serializers import UserSerializer
 from item.serializers import ItemSerializer
-from reviewsite.utils.image_utils import resize_image
 
 class ReviewSerializer(serializers.ModelSerializer):
   user = UserSerializer(read_only=True)
