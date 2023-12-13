@@ -20,6 +20,7 @@ from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.parsers import MultiPartParser, FormParser
 from reviewsite.utils.image_utils import resize_image,delete_image_from_s3
 from botocore.exceptions import ClientError
+from django.db import transaction
 
 
 

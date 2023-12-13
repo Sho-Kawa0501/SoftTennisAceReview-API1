@@ -21,6 +21,7 @@ from rest_framework.exceptions import ValidationError
 import boto3
 from botocore.exceptions import ClientError
 from django.conf import settings
+from django.db import transaction
 
 User = get_user_model()
 logger = logging.getLogger(__name__)
@@ -135,6 +136,16 @@ class ReviewViewSet(viewsets.ModelViewSet):
       serializer.save(is_edited=True)
     else:
       serializer.save()
+
+  def perform_destroy(self, instance):
+    # レビューに関連する画像があれば、それをS3から削除
+    if instance.image:
+      image_path = 'static/' + instance.image.name
+      delete_image_from_s3(image_path)
+
+    # データベースからレビューを削除
+    with transaction.atomic():
+      super().perform_destroy(instance) 
 
 
 class ReviewListFilterView(generics.ListAPIView):
