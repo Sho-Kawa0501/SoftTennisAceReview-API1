@@ -7,9 +7,9 @@ import uuid
 class Review(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,editable=False)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item,on_delete=models.CASCADE)
+    item = models.ForeignKey(Item,on_delete=models.CASCADE,db_index=True)
     title = models.CharField("タイトル", max_length=200)
-    image = models.ImageField(upload_to='reviews/', verbose_name='画像', null=True, blank=True)
+    image = models.ImageField(upload_to='reviews/', verbose_name='画像',null=True)
     content = models.TextField("本文")
     favorites_count = models.IntegerField(default=0)
     is_edited = models.BooleanField(default=False)

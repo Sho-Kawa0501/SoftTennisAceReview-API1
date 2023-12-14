@@ -39,12 +39,7 @@ class Position(models.Model):
     return self.name
 
 class Item(models.Model):
-  item_name = models.CharField(max_length=30,null=False)
-  slug = models.SlugField(
-    max_length=30,
-    blank=True,
-    null=True,
-  )
+  item_name = models.CharField(max_length=30,null=False,db_index=True)
   brand = models.ForeignKey(Brand, on_delete=models.CASCADE,null=False)
   series = models.ForeignKey(Series, on_delete=models.CASCADE,null=False)
   position = models.ForeignKey(Position, on_delete=models.CASCADE,null=False)

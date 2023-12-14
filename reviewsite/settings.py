@@ -133,25 +133,25 @@ WSGI_APPLICATION = 'reviewsite.wsgi.application'
 
 # デバッグTrue
 # Database
-# if DEBUG:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.postgresql',
-#             'NAME': env('DB_NAME'),
-#             'USER': env('DB_USER'),
-#             'PASSWORD': env('DB_PASSWORD'),
-#             'HOST': env('DB_HOST'),
-#             'PORT': env('DB_PORT'),
-#         }
-#     }
-# else:
-#     # DATABASES = {"default": dj_database_url.config()}
-#     DATABASES = {
-#         'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-#     }
-DATABASES = {
-    'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
-}
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': env('DB_NAME'),
+            'USER': env('DB_USER'),
+            'PASSWORD': env('DB_PASSWORD'),
+            'HOST': env('DB_HOST'),
+            'PORT': env('DB_PORT'),
+        }
+    }
+else:
+    # DATABASES = {"default": dj_database_url.config()}
+    DATABASES = {
+        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+    }
+# DATABASES = {
+#     'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+# }
 
 
 # Password validation

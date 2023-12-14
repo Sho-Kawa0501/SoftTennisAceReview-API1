@@ -21,7 +21,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from reviewsite.utils.image_utils import resize_image,delete_image_from_s3
 from botocore.exceptions import ClientError
 from django.db import transaction
-
+from review.models import UserReview
 
 
 logger = logging.getLogger(__name__)
@@ -58,7 +58,6 @@ class RegisterView(APIView):
       raise APIException('アカウント登録時に問題が発生しました。')
       
 
-# jwt_expはexceptionsに名称変更している(jwt_views,exceptions as jwt_exp)
 class MyTokenObtainPairView(jwt_views.TokenObtainPairView):
   serializer_class = serializers.MyTokenObtainPairSerializer
   permission_classes = (permissions.AllowAny, )
@@ -233,10 +232,31 @@ class DeleteUserView(APIView):
     user = request.user
     if user is None:
       raise NotAuthenticated("ユーザーが認証されていません。")
+
     try:
-      user.delete()
-      return Response(
-        status=status.HTTP_204_NO_CONTENT,
-      )
+      with transaction.atomic():
+        if user.image and not user.image.name.endswith('default/default.png'):
+          delete_image_from_s3('profiles/' + user.image.name)
+
+        user_reviews = UserReview.objects.filter(user=user)
+        for user_review in user_reviews:
+            if user_review.review.image:
+                delete_image_from_s3('reviews/' + user_review.review.image.name)
+
+        user.delete()
+      return Response(status=status.HTTP_204_NO_CONTENT)
     except Exception as e:
-      raise APIException("ユーザーの削除に問題が発生しました。エラーメッセージ: {}".format(str(e)))
+      raise APIException(f"ユーザーの削除に問題が発生しました。エラーメッセージ: {str(e)}")
+
+
+  # def delete(self, request):
+  #   user = request.user
+  #   if user is None:
+  #     raise NotAuthenticated("ユーザーが認証されていません。")
+  #   try:
+  #     user.delete()
+  #     return Response(
+  #       status=status.HTTP_204_NO_CONTENT,
+  #     )
+  #   except Exception as e:
+  #     raise APIException("ユーザーの削除に問題が発生しました。エラーメッセージ: {}".format(str(e)))
