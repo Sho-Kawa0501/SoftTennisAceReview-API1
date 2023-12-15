@@ -240,8 +240,8 @@ class DeleteUserView(APIView):
 
         user_reviews = UserReview.objects.filter(user=user)
         for user_review in user_reviews:
-            if user_review.review.image:
-                delete_image_from_s3('reviews/' + user_review.review.image.name)
+          if user_review.review.image:
+            delete_image_from_s3('reviews/' + user_review.review.image.name)
 
         user.delete()
       return Response(status=status.HTTP_204_NO_CONTENT)
