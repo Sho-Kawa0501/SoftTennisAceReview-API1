@@ -236,12 +236,12 @@ class DeleteUserView(APIView):
     try:
       with transaction.atomic():
         if user.image and not user.image.name.endswith('default/default.png'):
-          delete_image_from_s3('profiles/' + user.image.name)
+          delete_image_from_s3('static/profiles/' + user.image.name)
 
         user_reviews = UserReview.objects.filter(user=user)
         for user_review in user_reviews:
           if user_review.review.image:
-            delete_image_from_s3('reviews/' + user_review.review.image.name)
+            delete_image_from_s3('static/reviews/' + user_review.review.image.name)
 
         user.delete()
       return Response(status=status.HTTP_204_NO_CONTENT)
