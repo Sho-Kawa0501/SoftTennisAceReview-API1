@@ -5,6 +5,7 @@ from review import serializers
 from review import models
 import os
 from item.models import Item
+from review.models import UserReview
 from rest_framework import status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
@@ -94,7 +95,17 @@ class CreateReviewView(generics.CreateAPIView):
     )
     item_id = self.kwargs.get('item_id')
 
-    serializer.save(user=self.request.user, image=image_file, item_id=item_id)
+    with transaction.atomic():
+      # Review インスタンスを保存
+      review = serializer.save(user=self.request.user, image=image_file, item_id=item_id)
+
+      # UserReview インスタンスを作成して保存
+      try:
+        UserReview.objects.create(user=self.request.user, review=review)
+      except Exception as e:
+        raise ValidationError(f"Error creating UserReview: {str(e)}")
+
+    # serializer.save(user=self.request.user, image=image_file, item_id=item_id)
 
 
 #新規投稿、編集、削除
