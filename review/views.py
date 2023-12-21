@@ -3,10 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from review import serializers
 from review import models
-import os
-from item.models import Item
 from review.models import UserReview
-from rest_framework import status
+from rest_framework import status,permissions
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 import logging
@@ -16,11 +14,10 @@ from django.contrib.auth import get_user_model
 from rest_framework.exceptions import NotFound
 from PIL import Image
 import io
+import jwt
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.exceptions import ValidationError
-import boto3
-from botocore.exceptions import ClientError
 from django.conf import settings
 from django.db import transaction
 
@@ -28,23 +25,11 @@ User = get_user_model()
 logger = logging.getLogger(__name__)
 
 #一覧表示
-class ReviewListView(generics.ListAPIView):
-  queryset = models.Review.objects.all().order_by('-created_at')
-  serializer_class = serializers.ReviewSerializer
-  permission_classes = (AllowAny,)
+# class ReviewListView(generics.ListAPIView):
+#   queryset = models.Review.objects.all().order_by('-created_at')
+#   serializer_class = serializers.ReviewSerializer
+#   permission_classes = (AllowAny,)
 
-
-class MyReviewListView(APIView):
-  serializer_class = serializers.ReviewSerializer
-  authentication_classes = (CookieHandlerJWTAuthentication,)
-
-  def get_queryset(self):
-    return models.Review.objects.filter(user=self.request.user,).order_by('-created_at')
-
-  def get(self, request, *args, **kwargs):
-    queryset = self.get_queryset()
-    serializer = self.serializer_class(queryset, many=True, context={'request': request})
-    return Response(serializer.data)
 
 #ログインしているユーザー以外のユーザーが投稿したレビューを取得
 class OtherUsersReviewListView(APIView):
@@ -61,6 +46,39 @@ class OtherUsersReviewListView(APIView):
     queryset = self.get_queryset()
     serializer = self.serializer_class(queryset, many=True, context={'request': request})
     return Response(serializer.data)
+
+
+class ReviewListView(APIView):
+  serializer_class = serializers.ReviewSerializer
+  authentication_classes = (CookieHandlerJWTAuthentication,)
+  permission_classes = (permissions.AllowAny,)
+
+  def get_queryset(self):
+    if self.request.user and self.request.user.is_authenticated:
+        # ログインユーザー以外のレビューを取得
+      return models.Review.objects.exclude(user=self.request.user).order_by('-created_at')
+    else:
+        # 全てのレビューを取得
+      return models.Review.objects.all().order_by('-created_at')
+
+  def get(self, request, *args, **kwargs):
+    queryset = self.get_queryset()
+    serializer = self.serializer_class(queryset, many=True, context={'request': request})
+    return Response(serializer.data)
+
+
+class MyReviewListView(APIView):
+  serializer_class = serializers.ReviewSerializer
+  authentication_classes = (CookieHandlerJWTAuthentication,)
+
+  def get_queryset(self):
+    return models.Review.objects.filter(user=self.request.user,).order_by('-created_at')
+
+  def get(self, request, *args, **kwargs):
+    queryset = self.get_queryset()
+    serializer = self.serializer_class(queryset, many=True, context={'request': request})
+    return Response(serializer.data)
+
 
 
 #レビューの詳細
@@ -156,7 +174,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     # データベースからレビューを削除
     with transaction.atomic():
-      super().perform_destroy(instance) 
+      super().perform_destroy(instance)
 
 
 class ReviewListFilterView(generics.ListAPIView):

@@ -4,7 +4,6 @@ from rest_framework import status
 from django.urls import reverse
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.serializers import ValidationError
-from rest_framework.test import force_authenticate
 from django.contrib.auth import get_user_model
 from django.conf import settings
 import jwt
