@@ -24,12 +24,6 @@ from django.db import transaction
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
-#一覧表示
-# class ReviewListView(generics.ListAPIView):
-#   queryset = models.Review.objects.all().order_by('-created_at')
-#   serializer_class = serializers.ReviewSerializer
-#   permission_classes = (AllowAny,)
-
 
 #ログインしているユーザー以外のユーザーが投稿したレビューを取得
 class OtherUsersReviewListView(APIView):
@@ -50,7 +44,6 @@ class OtherUsersReviewListView(APIView):
 
 class ReviewListView(APIView):
   serializer_class = serializers.ReviewSerializer
-  authentication_classes = (CookieHandlerJWTAuthentication,)
   permission_classes = (permissions.AllowAny,)
 
   def get_queryset(self):
