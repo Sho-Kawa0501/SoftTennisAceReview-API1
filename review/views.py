@@ -44,10 +44,10 @@ class OtherUsersReviewListView(APIView):
 
 class ReviewListFilterView(APIView):
   serializer_class = serializers.ReviewSerializer
-  permission_classes = (permissions.AllowAny,)
+  permission_classes = (AllowAny,)
 
   def get_queryset(self):
-    item_id = self.kwargs.get('item_id', None)
+    item_id = self.kwargs['pk']
     if not self.request.user:
       return models.Review.objects.all().order_by('-created_at')
     if item_id:
@@ -58,6 +58,13 @@ class ReviewListFilterView(APIView):
     queryset = self.get_queryset()
     serializer = self.serializer_class(queryset, many=True, context={'request': request})
     return Response(serializer.data)
+
+# class ReviewListFilterView(generics.ListAPIView):
+#   serializer_class = serializers.ReviewSerializer
+#   permission_classes = (AllowAny,)
+#   def get_queryset(self):
+#     item_id = self.kwargs['pk']
+#     return models.Review.objects.filter(item_id=item_id)
 
 
 class MyReviewListView(APIView):
@@ -161,14 +168,6 @@ class ReviewViewSet(viewsets.ModelViewSet):
     # データベースからレビューを削除
     with transaction.atomic():
       super().perform_destroy(instance)
-
-
-# class ReviewListFilterView(generics.ListAPIView):
-#   serializer_class = serializers.ReviewSerializer
-#   permission_classes = (AllowAny,)
-#   def get_queryset(self):
-#     item_id = self.kwargs['pk']
-#     return models.Review.objects.filter(item_id=item_id)
 
 
 class GetFavoriteReviewCountView(generics.RetrieveAPIView):
