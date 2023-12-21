@@ -48,16 +48,16 @@ class ReviewListFilterView(APIView):
 
   def get_queryset(self):
     item_id = self.kwargs['pk']
-    if not self.request.user:
-      return models.Review.objects.all().order_by('-created_at')
-    if item_id:
-      return models.Review.objects.exclude(user=self.request.user).order_by('-created_at')
-    # 
+    queryset = models.Review.objects.filter(item_id=item_id)
+    if self.request.user.is_authenticated:
+      queryset = queryset.exclude(user=self.request.user)
+    return queryset.order_by('-created_at')
 
   def get(self, request, *args, **kwargs):
     queryset = self.get_queryset()
     serializer = self.serializer_class(queryset, many=True, context={'request': request})
     return Response(serializer.data)
+
 
 # class ReviewListFilterView(generics.ListAPIView):
 #   serializer_class = serializers.ReviewSerializer
