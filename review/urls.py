@@ -8,7 +8,7 @@ router = DefaultRouter()
 router.register('reviews', views.ReviewViewSet)
 
 urlpatterns = [
-  path('review_list/',views.ReviewListView.as_view(),name='review-list'),
+  # path('review_list/',views.ReviewListView.as_view(),name='review-list'),
   path('myreview_list/', views.MyReviewListView.as_view(), name='my-reviews-list-all'),
   path('otherusers_review_list/<int:item_id>',views.OtherUsersReviewListView.as_view(),name='otherusers-review-list'),
   path('review_list/<int:pk>/',views.ReviewListFilterView.as_view(),name='review-list-filter'),
