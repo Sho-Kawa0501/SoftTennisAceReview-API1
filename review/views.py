@@ -50,10 +50,11 @@ class OtherUsersReviewListView(APIView):
 
 class ReviewListView(APIView):
   serializer_class = serializers.ReviewSerializer
+  authentication_classes = (CookieHandlerJWTAuthentication,)
   permission_classes = (permissions.AllowAny,)
 
   def get_queryset(self):
-    if self.request.user and self.request.user.is_authenticated:
+    if self.request.user:
         # ログインユーザー以外のレビューを取得
       return models.Review.objects.exclude(user=self.request.user).order_by('-created_at')
     else:
