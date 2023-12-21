@@ -51,8 +51,8 @@ class ReviewListFilterView(APIView):
     if not self.request.user:
       return models.Review.objects.all().order_by('-created_at')
     if item_id:
-      return models.Review.objects.exclude(user=self.request.user).filter(item__id=item_id).order_by('-created_at')
-    # return models.Review.objects.exclude(user=self.request.user).order_by('-created_at')
+      return models.Review.objects.exclude(user=self.request.user).order_by('-created_at')
+    # 
 
   def get(self, request, *args, **kwargs):
     queryset = self.get_queryset()
