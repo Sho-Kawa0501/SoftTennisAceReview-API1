@@ -50,28 +50,15 @@ class OtherUsersReviewListView(APIView):
 
 class ReviewListView(APIView):
   serializer_class = serializers.ReviewSerializer
-  authentication_classes = (CookieHandlerJWTAuthentication,)
   permission_classes = (permissions.AllowAny,)
 
   def get_queryset(self):
-    item_id = self.kwargs.get('item_id', None)
-    jwt_token = self.request.COOKIES.get("access_token")
-    if not jwt_token:
+    if self.request.user and self.request.user.is_authenticated:
+        # ログインユーザー以外のレビューを取得
+      return models.Review.objects.exclude(user=self.request.user).order_by('-created_at')
+    else:
+        # 全てのレビューを取得
       return models.Review.objects.all().order_by('-created_at')
-    try:
-      payload = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=["HS256"])
-      user = User.objects.get(id=payload["user_id"])
-      if user.is_active:
-      # ログインユーザー以外のレビューを取得
-        return models.Review.objects.exclude(user=self.request.user).filter(item__id=item_id).order_by('-created_at')
-      else:
-        return Response({"isAccessAuthenticated": False, "reason": "user_inactive"}, status=status.HTTP_200_OK)
-    except jwt.ExpiredSignatureError:
-      return Response({"isAccessAuthenticated": False, "reason": "token_expired"}, status=status.HTTP_200_OK)
-    except jwt.exceptions.DecodeError:
-      return Response({"isAccessAuthenticated": False, "reason": "invalid_token"}, status=status.HTTP_200_OK)
-    except User.DoesNotExist:
-      return Response({"isAccessAuthenticated": False, "reason": "user_not_found"}, status=status.HTTP_200_OK)
 
   def get(self, request, *args, **kwargs):
     queryset = self.get_queryset()
