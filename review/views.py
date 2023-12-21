@@ -54,12 +54,12 @@ class ReviewListView(APIView):
   permission_classes = (permissions.AllowAny,)
 
   def get_queryset(self):
-    if self.request.user:
-        # ログインユーザー以外のレビューを取得
-      return models.Review.objects.exclude(user=self.request.user).order_by('-created_at')
-    else:
-        # 全てのレビューを取得
+    item_id = self.kwargs.get('item_id', None)
+    if not self.request.user:
       return models.Review.objects.all().order_by('-created_at')
+    if item_id:
+      return models.Review.objects.exclude(user=self.request.user).filter(item__id=item_id).order_by('-created_at')
+    return models.Review.objects.exclude(user=self.request.user).order_by('-created_at')
 
   def get(self, request, *args, **kwargs):
     queryset = self.get_queryset()
