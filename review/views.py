@@ -49,7 +49,7 @@ class ReviewListFilterView(APIView):
   def get_queryset(self):
     item_id = self.kwargs['pk']
     queryset = models.Review.objects.filter(item_id=item_id).order_by('-created_at')
-    if self.request.user.is_authenticated:
+    if self.request.user:
       queryset = queryset.exclude(user=self.request.user)
     return queryset
 
