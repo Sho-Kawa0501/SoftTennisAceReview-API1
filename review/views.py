@@ -44,14 +44,14 @@ class OtherUsersReviewListView(APIView):
 
 class ReviewListFilterView(APIView):
   serializer_class = serializers.ReviewSerializer
+  authentication_classes = (CookieHandlerJWTAuthentication,)
   permission_classes = (AllowAny,)
 
   def get_queryset(self):
-    item_id = self.kwargs['pk']
-    queryset = models.Review.objects.filter(item_id=item_id).order_by('-created_at')
-    if self.request.user:
-      queryset = queryset.exclude(user=self.request.user)
-    return queryset
+    item_id = self.kwargs.get('item_id', None)
+    if self.request.user.is_authenticated:
+      return models.Review.objects.exclude(user=self.request.user).filter(item__id=item_id).order_by('-created_at')
+    return models.Review.objects.filter(item__id=item_id).order_by('-created_at')
 
   def get(self, request, *args, **kwargs):
     queryset = self.get_queryset()
