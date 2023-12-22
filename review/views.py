@@ -44,7 +44,6 @@ class OtherUsersReviewListView(APIView):
 
 class ReviewListFilterView(APIView):
   serializer_class = serializers.ReviewSerializer
-  authentication_classes = (CookieHandlerJWTAuthentication,)
   permission_classes = (AllowAny,)
 
   def get_queryset(self):
