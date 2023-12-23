@@ -4,7 +4,7 @@ from account.serializers import UserSerializer
 from item.serializers import ItemSerializer
 
 class ReviewSerializer(serializers.ModelSerializer):
-  user = UserSerializer(read_only=True)
+  # user = UserSerializer(read_only=True)
   item = ItemSerializer(read_only=True)
   favorites_count = serializers.IntegerField(read_only=True)
   is_my_review = serializers.SerializerMethodField()
