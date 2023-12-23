@@ -42,18 +42,13 @@ class OtherUsersReviewListView(APIView):
     return Response(serializer.data)
 
 
-class ReviewListFilterView(APIView):
+class ReviewListItemFilterView(APIView):
   serializer_class = serializers.ReviewSerializer
   permission_classes = (AllowAny,)
 
   def get_queryset(self):
     item_id = self.kwargs.get('item_id', None)
-    if self.request.user:
-        # ログインユーザーを除外
-      return models.Review.objects.exclude(user=self.request.user).filter(item__id=item_id).order_by('-created_at')
-    else:
-        # すべてのレビューを返す
-      return models.Review.objects.filter(item__id=item_id).order_by('-created_at')
+    return models.Review.objects.filter(item__id=item_id).order_by('-created_at')
 
   def get(self, request, *args, **kwargs):
     queryset = self.get_queryset()
