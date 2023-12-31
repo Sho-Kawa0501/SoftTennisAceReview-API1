@@ -47,7 +47,7 @@ class Item(models.Model):
     blank=True,
     null=True,
     upload_to='items/',
-    default='default/default_item.png'
+    default='default/default-item.jpg'
   )
   release_date = models.DateField()
   display = models.BooleanField(default=False)
