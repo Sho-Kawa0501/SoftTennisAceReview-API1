@@ -9,13 +9,13 @@ router = DefaultRouter()
 router.register('', views.UserViewSet)
 
 urlpatterns = [
-    path('login/', views.MyTokenObtainPairView.as_view(),name='login'),
-    path('csrf-token/',csrfToken),
     path('users/', include(router.urls)),
-    path('token/refresh/',views.AccessTokenRefreshView.as_view(),name='access-token-refresh'),
-    path('refresh-token/',views.RefreshGetView.as_view(),name='refresh-token'),
+    path('login/', views.MyTokenObtainPairView.as_view(),name='login'),
     path('register/', views.RegisterView.as_view(),name='register'),
-    path('loginuser-information/', views.CheckAuthView.as_view(),name='loginuser-information'), 
+    path('check-auth/', views.CheckAuthView.as_view(),name='check-auth'),
+    path('csrf-token/',csrfToken),
+    path('get-refresh-token/',views.GetRefreshTokenView.as_view(),name='get-refresh-token'),
+    path('create-accesstoken/',views.CreateAccessTokenView.as_view(),name='create-accesstoken'),
     path('logout/',views.LogoutView.as_view(),name='logout'),
     path('user/delete/', views.DeleteUserView.as_view(),name='user/delete/'),
 ]

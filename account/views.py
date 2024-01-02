@@ -27,7 +27,6 @@ User = get_user_model()
 
 
 class RegisterView(APIView):
-  #ログインしていなくても使用可能
   permission_classes = (permissions.AllowAny, )
   authentication_classes = ()
 
@@ -42,7 +41,6 @@ class RegisterView(APIView):
         {'error': 'メールアドレスとパスワードは必須です。'},
         status=status.HTTP_400_BAD_REQUEST
       )
-      #ユーザーが既に登録されているか確認する
       if not User.objects.filter(email=email).exists():
         User.objects.create_user(email=email,password=password)
         return Response(
@@ -55,7 +53,7 @@ class RegisterView(APIView):
     except Exception as e:
       raise APIException('アカウント登録時に問題が発生しました。')
       
-
+#ログイン
 class MyTokenObtainPairView(jwt_views.TokenObtainPairView):
   serializer_class = serializers.MyTokenObtainPairSerializer
   permission_classes = (permissions.AllowAny, )
@@ -118,46 +116,8 @@ class CheckAuthView(APIView):
     except User.DoesNotExist:
       return Response({"isAccessAuthenticated": False, "reason": "user_not_found"}, status=status.HTTP_200_OK)
 
-# class CheckAuthView(APIView):
-#   serializer_class = serializers.UserSerializer
-#   authentication_classes = (CookieHandlerJWTAuthentication,)
-
-#   def get(self, request, *args, **kwargs):
-#     jwt_token = request.COOKIES.get("access_token")
-#     if not jwt_token:
-#       return Response(
-#         {"error": "No Token"}, status=status.HTTP_400_BAD_REQUEST
-#       )
-#     # Token検証
-#     try:
-#       payload = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=["HS256"])
-#       loginUser = User.objects.get(id=payload["user_id"])
-#       if loginUser.is_active:
-#         res = serializers.UserSerializer(self.request.user)
-#         return Response(res.data, status=status.HTTP_200_OK)
-#       else:
-#         return Response(
-#           {"error": "User is not active"}, status=status.HTTP_400_BAD_REQUEST
-#         )
-#     # エラーキャッチ    
-#     # Token期限切れ
-#     except jwt.ExpiredSignatureError:
-#       return Response(
-#         {"error": "Activations link expired"}, status=status.HTTP_401_UNAUTHORIZED
-#       )
-#     # 不正なToken
-#     except jwt.exceptions.DecodeError:
-#       return Response(
-#         {"error": "Invalid Token"}, status=status.HTTP_401_UNAUTHORIZED
-#       )
-#     # ユーザーが存在しない
-#     except User.DoesNotExist:
-#       return Response(
-#         {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
-#       )
-
 # coookieからリフレッシュトークンを取得
-class RefreshGetView(APIView):
+class GetRefreshTokenView(APIView):
   authentication_classes = (CookieHandlerJWTAuthentication,)
 
   def get(self, request, *args, **kwargs):
@@ -171,7 +131,7 @@ class RefreshGetView(APIView):
 
 #TokenRefreshViewを拡張
 # リフレッシュトークンを使って、新しいアクセストークンを生成する
-class AccessTokenRefreshView(jwt_views.TokenRefreshView):
+class CreateAccessTokenView(jwt_views.TokenRefreshView):
   def post(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     try:
@@ -283,3 +243,42 @@ class DeleteUserView(APIView):
   #     )
   #   except Exception as e:
   #     raise APIException("ユーザーの削除に問題が発生しました。エラーメッセージ: {}".format(str(e)))
+
+
+# class CheckAuthView(APIView):
+#   serializer_class = serializers.UserSerializer
+#   authentication_classes = (CookieHandlerJWTAuthentication,)
+
+#   def get(self, request, *args, **kwargs):
+#     jwt_token = request.COOKIES.get("access_token")
+#     if not jwt_token:
+#       return Response(
+#         {"error": "No Token"}, status=status.HTTP_400_BAD_REQUEST
+#       )
+#     # Token検証
+#     try:
+#       payload = jwt.decode(jwt_token, settings.SECRET_KEY, algorithms=["HS256"])
+#       loginUser = User.objects.get(id=payload["user_id"])
+#       if loginUser.is_active:
+#         res = serializers.UserSerializer(self.request.user)
+#         return Response(res.data, status=status.HTTP_200_OK)
+#       else:
+#         return Response(
+#           {"error": "User is not active"}, status=status.HTTP_400_BAD_REQUEST
+#         )
+#     # エラーキャッチ    
+#     # Token期限切れ
+#     except jwt.ExpiredSignatureError:
+#       return Response(
+#         {"error": "Activations link expired"}, status=status.HTTP_401_UNAUTHORIZED
+#       )
+#     # 不正なToken
+#     except jwt.exceptions.DecodeError:
+#       return Response(
+#         {"error": "Invalid Token"}, status=status.HTTP_401_UNAUTHORIZED
+#       )
+#     # ユーザーが存在しない
+#     except User.DoesNotExist:
+#       return Response(
+#         {"error": "User not found"}, status=status.HTTP_404_NOT_FOUND
+#       )

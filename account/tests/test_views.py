@@ -83,7 +83,7 @@ class MyTokenObtainPairViewTest(APITestCase):
     response = self.client.post(self.url, data, format='json')
     self.assertIn(response.status_code, [status.HTTP_401_UNAUTHORIZED, status.HTTP_400_BAD_REQUEST])
 
-class AccessTokenRefreshViewTest(APITestCase):
+class CreateAccessTokenViewTest(APITestCase):
   def setUp(self):
     self.user = User.objects.create_user(email='test@example.com', password='password123')
     self.refresh_token = RefreshToken.for_user(self.user)
@@ -164,7 +164,7 @@ class CheckAuthViewTest(APITestCase):
     self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class RefreshGetViewTestCase(APITestCase):
+class GetRefreshTokenViewTestCase(APITestCase):
   def setUp(self):
     # テスト用のユーザーを作成し、refresh_tokenを生成する
     self.user = User.objects.create_user(
