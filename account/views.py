@@ -31,26 +31,23 @@ class RegisterView(APIView):
   authentication_classes = ()
 
   def post(self, request):
-    try:
-      data = request.data
-      email = data['email'].lower()
-      password = data['password']
+    data = request.data
+    email = data.get('email', '').lower()
+    password = data.get('password', '')
 
-      if not email or not password:
-        return Response(
-        {'error': 'メールアドレスとパスワードは必須です。'},
-        status=status.HTTP_400_BAD_REQUEST
-      )
-      if not User.objects.filter(email=email).exists():
-        User.objects.create_user(email=email,password=password)
-        return Response(
-          status=status.HTTP_201_CREATED
-        )
-      else:
-        raise ValidationError('既に登録されているメールアドレスです。')
-    except ValidationError as e:
-      raise e
+    if not email or not password:
+      # ValidationErrorを使用してカスタムエラーメッセージを設定
+      raise ValidationError('メールアドレスとパスワードは必須です。')
+
+    if User.objects.filter(email=email).exists():
+      # 既に存在するメールアドレスである場合
+      raise ValidationError('既に登録されているメールアドレスです。')
+
+    try:
+      User.objects.create_user(email=email, password=password)
+      return Response(status=status.HTTP_201_CREATED)
     except Exception as e:
+      # その他のエラーが発生した場合
       raise APIException('アカウント登録時に問題が発生しました。')
       
 #ログイン
@@ -62,8 +59,6 @@ class MyTokenObtainPairView(jwt_views.TokenObtainPairView):
   def post(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-   
-
     res = Response(serializer.validated_data, status=status.HTTP_200_OK)
 
     try:
