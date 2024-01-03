@@ -41,7 +41,10 @@ class RegisterView(APIView):
 
     if User.objects.filter(email=email).exists():
       # 既に存在するメールアドレスである場合
-      raise ValidationError('既に登録されているメールアドレスです。')
+      return Response(
+        {"detail": "既に登録されているメールアドレスです。"},
+        status=status.HTTP_400_BAD_REQUEST
+      )
 
     try:
       User.objects.create_user(email=email, password=password)
