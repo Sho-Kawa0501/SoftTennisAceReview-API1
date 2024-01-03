@@ -62,6 +62,8 @@ class MyTokenObtainPairView(jwt_views.TokenObtainPairView):
   def post(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     serializer.is_valid(raise_exception=True)
+   
+
     res = Response(serializer.validated_data, status=status.HTTP_200_OK)
 
     try:
