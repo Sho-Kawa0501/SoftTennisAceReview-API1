@@ -86,33 +86,29 @@ class CreateReviewView(generics.CreateAPIView):
 
   def perform_create(self, serializer):
     image = self.request.FILES.get('image')
-    if not image:
-      raise ValidationError({'image': 'Image is required.'})
+    image_file = None
+    if image:
+      # raise ValidationError({'image': 'Image is required.'})
       
-    with Image.open(image) as img:
-      resized_image = resize_image(img)
-
-    image_io = io.BytesIO()
-    resized_image.save(image_io, format='JPEG', quality=85)
-    image_io.seek(0)
-    image_file = InMemoryUploadedFile(
-      image_io,
-      None,
-      image.name,
-      'image/jpeg',
-      image_io.getbuffer().nbytes, None
-    )
-    item_id = self.kwargs.get('item_id')
-
-    with transaction.atomic():
-      # Review インスタンスを保存
-      review = serializer.save(user=self.request.user, image=image_file, item_id=item_id)
-
-      # UserReview インスタンスを作成して保存
-      try:
-        UserReview.objects.create(user=self.request.user, review=review)
-      except Exception as e:
-        raise ValidationError(f"Error creating UserReview: {str(e)}")
+      with Image.open(image) as img:
+        resized_image = resize_image(img)
+      image_io = io.BytesIO()
+      resized_image.save(image_io, format='JPEG', quality=85)
+      image_io.seek(0)
+      image_file = InMemoryUploadedFile(
+        image_io,
+        None,
+        image.name,
+        'image/jpeg',
+        image_io.getbuffer().nbytes, None
+      )
+      item_id = self.kwargs.get('item_id')
+      with transaction.atomic():
+        review = serializer.save(user=self.request.user, image=image_file, item_id=item_id)
+        try:
+          UserReview.objects.create(user=self.request.user, review=review)
+        except Exception as e:
+          raise ValidationError(f"Error creating UserReview: {str(e)}")
 
     # serializer.save(user=self.request.user, image=image_file, item_id=item_id)
 
@@ -129,16 +125,16 @@ class ReviewViewSet(viewsets.ModelViewSet):
   def perform_update(self, serializer):
     # レビューの画像が変更される場合の処理（S3から古い画像を削除する処理を追加）
     review = serializer.instance
+    old_image = review.image
+    new_image = self.request.FILES.get('image')
 
-    if 'image' in serializer.validated_data:
-      old_image = review.image
+    if new_image:
+      # 新しい画像が提供された場合
       if old_image:
+        # 古い画像をS3から削除
         image_path = 'static/' + old_image.name
         delete_image_from_s3(image_path)
-
-    if self.request.FILES.get('image'):
-      uploaded_file = self.request.FILES.get('image')
-      with Image.open(self.request.FILES.get('image')) as img:
+      with Image.open(new_image) as img:
         resized_image = resize_image(img)
       image_io = io.BytesIO()
       resized_image.save(image_io, format='JPEG', quality=85)
@@ -146,17 +142,24 @@ class ReviewViewSet(viewsets.ModelViewSet):
       image_file = InMemoryUploadedFile(
         image_io,
         None,
-        uploaded_file.name,
+        new_image.name,
         'image/jpeg',
         image_io.getbuffer().nbytes, None
       )
       serializer.validated_data['image'] = image_file
+    elif 'image' in serializer.validated_data and not new_image:
+      # 画像が提供されておらず、既存の画像がある場合、画像を削除
+      if old_image:
+        image_path = 'static/' + old_image.name
+        delete_image_from_s3(image_path)
+      serializer.validated_data['image'] = None
 
+    # レビューの編集内容を保存
     if not review.is_edited:
       serializer.save(is_edited=True)
     else:
       serializer.save()
-
+      
   def perform_destroy(self, instance):
     # レビューに関連する画像があれば、それをS3から削除
     if instance.image:
@@ -166,6 +169,34 @@ class ReviewViewSet(viewsets.ModelViewSet):
     # データベースからレビューを削除
     with transaction.atomic():
       super().perform_destroy(instance)
+
+  # if 'image' in serializer.validated_data:
+  #     old_image = review.image
+  #     if old_image:
+  #       image_path = 'static/' + old_image.name
+  #       delete_image_from_s3(image_path)
+
+  #   if self.request.FILES.get('image'):
+  #     uploaded_file = self.request.FILES.get('image')
+  #     with Image.open(self.request.FILES.get('image')) as img:
+  #       resized_image = resize_image(img)
+  #     image_io = io.BytesIO()
+  #     resized_image.save(image_io, format='JPEG', quality=85)
+  #     image_io.seek(0)
+  #     image_file = InMemoryUploadedFile(
+  #       image_io,
+  #       None,
+  #       uploaded_file.name,
+  #       'image/jpeg',
+  #       image_io.getbuffer().nbytes, None
+  #     )
+  #     serializer.validated_data['image'] = image_file
+
+  #   if not review.is_edited:
+  #     serializer.save(is_edited=True)
+  #   else:
+  #     serializer.save()
+
 
 
 class GetFavoriteReviewCountView(generics.RetrieveAPIView):
