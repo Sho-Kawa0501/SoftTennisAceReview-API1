@@ -88,8 +88,6 @@ class CreateReviewView(generics.CreateAPIView):
     image = self.request.FILES.get('image')
     image_file = None
     if image:
-      # raise ValidationError({'image': 'Image is required.'})
-      
       with Image.open(image) as img:
         resized_image = resize_image(img)
       image_io = io.BytesIO()
@@ -102,14 +100,16 @@ class CreateReviewView(generics.CreateAPIView):
         'image/jpeg',
         image_io.getbuffer().nbytes, None
       )
-      item_id = self.kwargs.get('item_id')
-      with transaction.atomic():
-        review = serializer.save(user=self.request.user, image=image_file, item_id=item_id)
-        try:
-          UserReview.objects.create(user=self.request.user, review=review)
-        except Exception as e:
-          raise ValidationError(f"Error creating UserReview: {str(e)}")
 
+    item_id = self.kwargs.get('item_id')
+    with transaction.atomic():
+      # 画像があるかないかにかかわらず、レビューを作成する
+      review = serializer.save(user=self.request.user, image=image_file, item_id=item_id)
+
+      try:
+        UserReview.objects.create(user=self.request.user, review=review)
+      except Exception as e:
+        raise ValidationError(f"Error creating UserReview: {str(e)}")
     # serializer.save(user=self.request.user, image=image_file, item_id=item_id)
 
 
@@ -159,7 +159,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
       serializer.save(is_edited=True)
     else:
       serializer.save()
-      
+
   def perform_destroy(self, instance):
     # レビューに関連する画像があれば、それをS3から削除
     if instance.image:
