@@ -153,6 +153,9 @@ class ReviewViewSet(viewsets.ModelViewSet):
         image_path = 'static/' + old_image.name
         delete_image_from_s3(image_path)
       serializer.validated_data['image'] = None
+      serializer.save()
+    else:
+      serializer.save()
 
     # レビューの編集内容を保存
     if not review.is_edited:
