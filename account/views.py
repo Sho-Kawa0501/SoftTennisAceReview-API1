@@ -173,29 +173,64 @@ class UserViewSet(ModelViewSet):
 
   def perform_update(self, serializer):
     login_user = serializer.instance
+    old_image = login_user.image
+    default_image_path = 'default/default.png'  # デフォルト画像のパスを設定
 
     if 'image' in serializer.validated_data:
-      old_image = login_user.image
-      if old_image:
+      new_image_path = serializer.validated_data['image']
+      if old_image and old_image.name != default_image_path:
+        # 以前の画像がデフォルト画像でない場合、S3から削除
         image_path = 'static/' + old_image.name
         delete_image_from_s3(image_path)
 
-    if self.request.FILES.get('image'):
-      uploaded_file = self.request.FILES.get('image')
-      with Image.open(self.request.FILES.get('image')) as img:
-        resized_image = resize_image(img)
-      image_io = io.BytesIO()
-      resized_image.save(image_io, format='JPEG', quality=85)
-      image_io.seek(0)
-      image_file = InMemoryUploadedFile(
-        image_io,
-        None,
-        uploaded_file.name,
-        'image/jpeg',
-        image_io.getbuffer().nbytes, None
-      )
-      serializer.validated_data['image'] = image_file
-      serializer.save()
+      if self.request.FILES.get('image'):
+        uploaded_file = self.request.FILES.get('image')
+        with Image.open(uploaded_file) as img:
+          resized_image = resize_image(img)
+        image_io = io.BytesIO()
+        resized_image.save(image_io, format='JPEG', quality=85)
+        image_io.seek(0)
+        image_file = InMemoryUploadedFile(
+          image_io,
+          None,
+          uploaded_file.name,
+          'image/jpeg',
+          image_io.getbuffer().nbytes, None
+        )
+        serializer.validated_data['image'] = image_file
+    else:
+      if not old_image or old_image.name == default_image_path:
+          # 画像がないか、デフォルトの画像の場合、デフォルト画像を保持
+        serializer.validated_data['image'] = 'default/default.png'
+
+    serializer.save()
+  # def perform_update(self, serializer):
+  #   login_user = serializer.instance
+  #   old_image = login_user.image
+  #   default_image_path = 'default/default.png'
+
+  #   if 'image' in serializer.validated_data:
+  #     old_image = login_user.image
+  #     if old_image:
+  #       image_path = 'static/' + old_image.name
+  #       delete_image_from_s3(image_path)
+
+  #   if self.request.FILES.get('image'):
+  #     uploaded_file = self.request.FILES.get('image')
+  #     with Image.open(self.request.FILES.get('image')) as img:
+  #       resized_image = resize_image(img)
+  #     image_io = io.BytesIO()
+  #     resized_image.save(image_io, format='JPEG', quality=85)
+  #     image_io.seek(0)
+  #     image_file = InMemoryUploadedFile(
+  #       image_io,
+  #       None,
+  #       uploaded_file.name,
+  #       'image/jpeg',
+  #       image_io.getbuffer().nbytes, None
+  #     )
+  #     serializer.validated_data['image'] = image_file
+  #     serializer.save()
 
 
 class LogoutView(APIView):

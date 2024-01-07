@@ -25,9 +25,3 @@ class UserSerializer(serializers.ModelSerializer):
     model = User
     fields = ('id','name','email','image','favorite_reviews')
 
-
-
-
-  # default_error_messages = {
-  #   'no_active_account': 'メールアドレスまたはパスワードが間違っています'
-  # }

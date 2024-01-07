@@ -148,11 +148,11 @@ class ReviewViewSet(viewsets.ModelViewSet):
       )
       serializer.validated_data['image'] = image_file
     elif 'image' in serializer.validated_data and not new_image:
+      serializer.validated_data['image'] = None
       # 画像が提供されておらず、既存の画像がある場合、画像を削除
       if old_image:
         image_path = 'static/' + old_image.name
         delete_image_from_s3(image_path)
-      serializer.validated_data['image'] = None
       serializer.save()
     else:
       serializer.save()
