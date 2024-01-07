@@ -195,12 +195,12 @@ class UserViewSet(ModelViewSet):
         'image/jpeg', image_io.getbuffer().nbytes, None
       )
       serializer.validated_data['image'] = image_file
-    elif 'image' in serializer.validated_data and not new_image:
+    elif 'image' in serializer.validated_data and serializer.validated_data['image'] is None:
       # 画像が提供されておらず、既存の画像がある場合、画像を削除
+      login_user.image = 'default/default.png'
       if old_image and old_image.name != default_image_path:
         image_path = 'static/' + old_image.name
         delete_image_from_s3(image_path)
-      login_user.image = 'default/default.png'
 
     serializer.save()
   # def perform_update(self, serializer):
