@@ -21,6 +21,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
+  image = serializers.ImageField(default='default/default.png')
+  
   class Meta:
     model = User
     fields = ('id','name','email','image','favorite_reviews')

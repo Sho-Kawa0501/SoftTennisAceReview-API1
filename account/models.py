@@ -24,7 +24,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,editable=False)
     email = models.EmailField(max_length=50,unique=True,db_index=True)
     name = models.CharField(max_length=255,default='未設定',db_index=True)
-    image = models.ImageField(upload_to='profiles/',default='default/default.png')
+    image = models.ImageField(upload_to='profiles/',default='default/default.png',blank=True,null=True,)
     updated_at = models.DateTimeField("更新日", auto_now=True) 
     created_at = models.DateTimeField("作成日", auto_now_add=True)
     is_active = models.BooleanField(default=True)
