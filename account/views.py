@@ -176,34 +176,31 @@ class UserViewSet(ModelViewSet):
     old_image = login_user.image
     default_image_path = 'default/default.png'  # デフォルト画像のパスを設定
 
-    if 'image' in serializer.validated_data:
-      new_image = serializer.validated_data['image']
-      if new_image is None:
-        # 画像がnullの場合、何もしない（または既存の画像を削除）
-        login_user.image = None
-        if old_image and old_image.name != default_image_path:
-          # 以前の画像がデフォルト画像でない場合、S3から削除
-          image_path = 'static/' + old_image.name
-          delete_image_from_s3(image_path)
-      else:
-        # 新しい画像がある場合の処理
-        if old_image and old_image.name != default_image_path:
-          # 以前の画像がデフォルト画像でない場合、S3から削除
-          image_path = 'static/' + old_image.name
-          delete_image_from_s3(image_path)
+    new_image = self.request.FILES.get('image')
 
-        if self.request.FILES.get('image'):
-          uploaded_file = self.request.FILES.get('image')
-          with Image.open(uploaded_file) as img:
-            resized_image = resize_image(img)
-          image_io = io.BytesIO()
-          resized_image.save(image_io, format='JPEG', quality=85)
-          image_io.seek(0)
-          image_file = InMemoryUploadedFile(
-            image_io, None, uploaded_file.name,
-            'image/jpeg', image_io.getbuffer().nbytes, None
-          )
-          serializer.validated_data['image'] = image_file
+    if new_image:
+      # 新しい画像が提供された場合
+      if old_image and old_image.name != default_image_path:
+        # 古い画像がデフォルト画像でない場合、S3から削除
+        image_path = 'static/' + old_image.name
+        delete_image_from_s3(image_path)
+
+      with Image.open(new_image) as img:
+        resized_image = resize_image(img)
+      image_io = io.BytesIO()
+      resized_image.save(image_io, format='JPEG', quality=85)
+      image_io.seek(0)
+      image_file = InMemoryUploadedFile(
+        image_io, None, new_image.name,
+        'image/jpeg', image_io.getbuffer().nbytes, None
+      )
+      serializer.validated_data['image'] = image_file
+    elif 'image' in serializer.validated_data and not new_image:
+      # 画像が提供されておらず、既存の画像がある場合、画像を削除
+      if old_image and old_image.name != default_image_path:
+        image_path = 'static/' + old_image.name
+        delete_image_from_s3(image_path)
+      login_user.image = 'default/default.png'
 
     serializer.save()
   # def perform_update(self, serializer):
