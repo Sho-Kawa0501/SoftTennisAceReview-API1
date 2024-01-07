@@ -175,6 +175,7 @@ class UserViewSet(ModelViewSet):
     login_user = serializer.instance
     old_image = login_user.image
     default_image_path = 'default/default.png'  # デフォルト画像のパス
+    print("validated_data:", serializer.validated_data)
 
     new_image = self.request.FILES.get('image')
 
