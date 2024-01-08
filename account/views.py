@@ -175,11 +175,10 @@ class UserViewSet(ModelViewSet):
     login_user = serializer.instance
     old_image = login_user.image
     default_image_path = 'default/default.png'  # デフォルト画像のパス
-    print("validated_data:", serializer.validated_data)
 
-    new_image = self.request.FILES.get('image',None)
+    new_image = self.request.FILES.get('image', None)
 
-    if new_image:
+    if new_image and new_image != '':
       # 新しい画像が提供された場合
       if old_image and old_image.name != default_image_path:
         # 古い画像がデフォルト画像でない場合、S3から削除
@@ -187,7 +186,8 @@ class UserViewSet(ModelViewSet):
         delete_image_from_s3(image_path)
 
       with Image.open(new_image) as img:
-        resized_image = resize_image(img)  # resize_imageは適切なリサイズ処理を行う関数
+        # resize_imageは適切なリサイズ処理を行う関数
+        resized_image = resize_image(img)
       image_io = io.BytesIO()
       resized_image.save(image_io, format='JPEG', quality=85)
       image_io.seek(0)
@@ -196,15 +196,15 @@ class UserViewSet(ModelViewSet):
         'image/jpeg', image_io.getbuffer().nbytes, None
       )
       serializer.validated_data['image'] = image_file
-
-    # elif 'image' in serializer.validated_data and serializer.validated_data['image'] is None:  
-    elif 'image' in serializer.validated_data and serializer.validated_data['image'] is None:
-      # 画像が提供されておらず、既存の画像がある場合、画像を削除
+    else:
+      # 画像がリセットされた場合の処理
       if old_image and old_image.name != default_image_path:
+        # 既存の画像がデフォルト画像でない場合、S3から削除
         image_path = 'static/' + old_image.name
         delete_image_from_s3(image_path)
 
-      serializer.validated_data['image'] = 'default/default.png'
+        # デフォルト画像に設定
+      serializer.validated_data['image'] = default_image_path
 
     serializer.save()
 
