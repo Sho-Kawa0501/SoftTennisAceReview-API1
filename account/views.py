@@ -198,7 +198,7 @@ class UserViewSet(ModelViewSet):
       serializer.validated_data['image'] = image_file
 
     # elif 'image' in serializer.validated_data and serializer.validated_data['image'] is None:
-    elif 'image' in serializer.validated_data and serializer.validated_data['image'] == '':
+    elif serializer.validated_data['image'] is None:
       # 画像が提供されておらず、既存の画像がある場合、画像を削除
       if old_image and old_image.name != default_image_path:
         image_path = 'static/' + old_image.name
